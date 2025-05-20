@@ -5,14 +5,15 @@ import UserMenu from "@/components/auth/UserMenu";
 interface PageContainerProps {
   title: string;
   children: React.ReactNode;
+  showBackButton?: boolean;
 }
 
-const PageContainer = ({ title, children }: PageContainerProps) => {
+const PageContainer = ({ title, children, showBackButton = false }: PageContainerProps) => {
   return (
     <div className="max-w-screen-md mx-auto bg-white min-h-screen h-full pb-24">
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
         <div className="px-4 py-4 flex justify-between items-center">
-          <AppHeader title={title} />
+          <AppHeader title={title} showBackButton={showBackButton} />
           <UserMenu />
         </div>
       </div>
