@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  needsOnboarding: boolean;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -20,7 +21,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const navigate = useNavigate();
+
+  // Check if user has completed onboarding by checking their profile
+  const checkOnboardingStatus = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('last_period, goal, training_age, cycle_length, one_rm')
+        .eq('id', userId)
+        .single();
+      
+      if (error) throw error;
+      
+      // If the user has a profile but hasn't set their last_period manually
+      // (it's just the default value from signup), they need onboarding
+      setNeedsOnboarding(!data.one_rm || !data.cycle_length);
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+      setNeedsOnboarding(true);
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener first
@@ -31,9 +53,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         if (event === 'SIGNED_IN') {
           toast.success("Signed in successfully");
-          navigate('/');
+          
+          // Check if user needs onboarding after sign in
+          if (session?.user) {
+            checkOnboardingStatus(session.user.id);
+          }
         } else if (event === 'SIGNED_OUT') {
           toast.info("Signed out");
+          setNeedsOnboarding(false);
           navigate('/auth');
         }
       }
@@ -43,6 +70,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        checkOnboardingStatus(session.user.id);
+      }
+      
       setLoading(false);
     });
 
@@ -64,7 +96,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) throw error;
-      toast.success("Signup successful! Check your email for verification.");
+      setNeedsOnboarding(true);
+      toast.success("Signup successful! Complete your profile setup.");
     } catch (error: any) {
       toast.error(error.message || "An error occurred during signup");
       throw error;
@@ -99,6 +132,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     session,
     loading,
+    needsOnboarding,
     signUp,
     signIn,
     signOut,

@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import WorkoutPageLoading from "@/components/workout/WorkoutPageLoading";
 
@@ -9,14 +9,22 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user, loading, needsOnboarding } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
+    if (!loading) {
+      // If not authenticated, redirect to auth page
+      if (!user) {
+        navigate("/auth");
+      } 
+      // If authenticated but needs onboarding and not already on onboarding page
+      else if (needsOnboarding && location.pathname !== '/onboarding') {
+        navigate("/onboarding");
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, needsOnboarding, navigate, location.pathname]);
 
   if (loading) {
     return <WorkoutPageLoading />;
