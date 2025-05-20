@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -117,10 +118,12 @@ const OnboardingPage = () => {
       setIsSubmitting(true);
       
       // Combine all form data
+      const lastPeriodDate = basicForm.getValues().lastPeriod;
+      
       const profileData = {
         id: user.id,
         cycle_length: basicForm.getValues().cycleLength,
-        last_period: basicForm.getValues().lastPeriod,
+        last_period: lastPeriodDate.toISOString(), // Convert Date to ISO string format
         goal: trainingForm.getValues().goal,
         training_age: trainingForm.getValues().trainingAge,
         one_rm: {
