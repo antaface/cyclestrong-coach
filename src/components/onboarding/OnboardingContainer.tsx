@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -48,20 +47,13 @@ const OnboardingContainer = () => {
 
   const generateCycleEvents = async (userId: string, cycleLength: number, lastPeriodDate: Date) => {
     try {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error || !data.session) {
-        console.error("Auth session error:", error);
-        throw new Error("Authentication required");
-      }
-      
-      // Use the correct way to get the Supabase URL - using string literal with project ID
+      // Use direct URL with project ID for edge function call
       const supabaseUrl = "https://sxeglgdcrfpfgtdexeje.supabase.co";
+      
       const response = await fetch(`${supabaseUrl}/functions/v1/generate-cycle-events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${data.session.access_token}`,
         },
         body: JSON.stringify({
           data: {

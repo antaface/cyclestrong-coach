@@ -27,42 +27,27 @@ serve(async (req) => {
   }
 
   try {
-    // Get the authorization header from the request
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create Supabase client with auth
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: { headers: { Authorization: authHeader } },
-        auth: { persistSession: false },
-      }
-    );
-
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // Parse request body
     const { data: cycleData } = await req.json() as { data: CycleData };
     const { userId, cycleLength, lastPeriod } = cycleData;
-
-    // Get current user to validate request
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user || user.id !== userId) {
+    
+    if (!userId || !cycleLength || !lastPeriod) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Missing required data' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Calculate phases for the next 90 days
     const events = generateCycleEvents(userId, new Date(lastPeriod), cycleLength, 90);
     
-    // Insert events into the database
-    const { data, error } = await supabaseClient
+    // Insert events into the database using service role
+    const { data, error } = await supabase
       .from('cycle_events')
       .insert(events);
 
