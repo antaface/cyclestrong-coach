@@ -1,1 +1,5 @@
+
 project_id = "sxeglgdcrfpfgtdexeje"
+
+[functions.generate-cycle-events]
+verify_jwt = true

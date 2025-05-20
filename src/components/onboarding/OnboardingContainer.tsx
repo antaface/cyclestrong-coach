@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -46,6 +45,44 @@ const OnboardingContainer = () => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
+  const generateCycleEvents = async (userId: string, cycleLength: number, lastPeriodDate: Date) => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error || !data.session) {
+        console.error("Auth session error:", error);
+        throw new Error("Authentication required");
+      }
+      
+      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/generate-cycle-events`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${data.session.access_token}`,
+        },
+        body: JSON.stringify({
+          data: {
+            userId,
+            cycleLength,
+            lastPeriod: lastPeriodDate.toISOString(),
+          }
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate cycle events");
+      }
+      
+      const result = await response.json();
+      console.log("Generated cycle events:", result);
+      return result;
+    } catch (error: any) {
+      console.error("Error generating cycle events:", error);
+      throw error;
+    }
+  };
+
   const completeOnboarding = async () => {
     if (!user) {
       toast.error("User not found. Please sign in again.");
@@ -87,7 +124,15 @@ const OnboardingContainer = () => {
       
       if (error) throw error;
       
-      toast.success("Profile setup complete!");
+      // Generate cycle events after saving profile
+      try {
+        await generateCycleEvents(user.id, formData.cycleLength, lastPeriodDate);
+        toast.success("Profile setup complete! Your cycle events have been generated.");
+      } catch (eventsError: any) {
+        console.error("Error generating cycle events:", eventsError);
+        toast.error("Profile saved but there was an issue generating your cycle calendar. Please try refreshing.");
+      }
+      
       navigate("/");
     } catch (error: any) {
       console.error("Error saving profile:", error);
