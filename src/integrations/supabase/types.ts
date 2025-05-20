@@ -9,7 +9,211 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      cycle_events: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          phase: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          phase: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          phase?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      form_reviews: {
+        Row: {
+          created_at: string
+          exercise: string
+          id: string
+          issues_json: Json
+          score: number
+          updated_at: string
+          video_url: string
+          workout_id: string
+        }
+        Insert: {
+          created_at?: string
+          exercise: string
+          id?: string
+          issues_json: Json
+          score: number
+          updated_at?: string
+          video_url: string
+          workout_id: string
+        }
+        Update: {
+          created_at?: string
+          exercise?: string
+          id?: string
+          issues_json?: Json
+          score?: number
+          updated_at?: string
+          video_url?: string
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_reviews_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          mindset: boolean
+          protein: boolean
+          sleep: boolean
+          training: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          mindset?: boolean
+          protein?: boolean
+          sleep?: boolean
+          training?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          mindset?: boolean
+          protein?: boolean
+          sleep?: boolean
+          training?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          cycle_length: number
+          goal: string
+          id: string
+          last_period: string
+          one_rm: Json | null
+          training_age: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cycle_length?: number
+          goal: string
+          id: string
+          last_period: string
+          one_rm?: Json | null
+          training_age: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cycle_length?: number
+          goal?: string
+          id?: string
+          last_period?: string
+          one_rm?: Json | null
+          training_age?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      programs: {
+        Row: {
+          created_at: string
+          id: string
+          plan_json: Json
+          start_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plan_json: Json
+          start_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plan_json?: Json
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      workouts: {
+        Row: {
+          completed: boolean
+          created_at: string
+          date: string
+          id: string
+          phase: string
+          program_id: string
+          session_json: Json
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          date: string
+          id?: string
+          phase: string
+          program_id: string
+          session_json: Json
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          phase?: string
+          program_id?: string
+          session_json?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workouts_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
