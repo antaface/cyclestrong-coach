@@ -1,14 +1,14 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Dumbbell, Calendar, ArrowRight, Loader2 } from "lucide-react";
+import { Calendar, ArrowRight, Loader2, Dumbbell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion } from "@/components/ui/accordion";
+import CollapsibleProgramWeek from "@/components/program/CollapsibleProgramWeek";
 
 // Define a type for our program data structure
 interface ProgramWeek {
@@ -56,7 +56,6 @@ const ProgramPage = () => {
   const [program, setProgram] = useState<Program | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeWeek, setActiveWeek] = useState("week1");
 
   useEffect(() => {
     if (user) {
@@ -90,11 +89,6 @@ const ProgramPage = () => {
         };
         
         setProgram(typedProgram);
-        
-        // Set active week to the first week if weeks exist
-        if (typedProgram.plan_json.weeks.length > 0) {
-          setActiveWeek("week1");
-        }
       } else {
         setProgram(null);
       }
@@ -190,35 +184,6 @@ const ProgramPage = () => {
     }
   };
 
-  const renderWorkoutCard = (workout: any, index: number) => {
-    return (
-      <Card key={`workout-${index}`} className="mb-4">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center">
-            Day {workout.day}: {workout.focus}
-          </CardTitle>
-          <CardDescription>
-            {workout.notes || "Focus on form and technique"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {workout.exercises?.map((exercise: any, i: number) => (
-              <div key={`exercise-${i}`} className="border-b border-border last:border-0 pb-2 last:pb-0">
-                <div className="font-medium">{exercise.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {exercise.sets} sets × {exercise.reps} reps
-                  {exercise.intensity && ` @ ${exercise.intensity}`}
-                  {exercise.notes && <div className="italic mt-1">{exercise.notes}</div>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
   const renderProgramContent = () => {
     if (!program?.plan_json) return null;
     
@@ -232,12 +197,6 @@ const ProgramPage = () => {
         </div>
       );
     }
-
-    // Create an array of week numbers for the tabs
-    const weekTabs = weeks.map((_: any, index: number) => ({
-      value: `week${index + 1}`,
-      label: `Week ${index + 1}`
-    }));
 
     return (
       <div className="space-y-6">
@@ -261,31 +220,16 @@ const ProgramPage = () => {
           </Button>
         </div>
 
-        <div className="rounded-lg border border-border p-1">
-          <Tabs defaultValue={activeWeek} onValueChange={setActiveWeek}>
-            <TabsList className="w-full grid" style={{ gridTemplateColumns: `repeat(${weekTabs.length}, 1fr)` }}>
-              {weekTabs.map((tab) => (
-                <TabsTrigger key={tab.value} value={tab.value}>
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            
-            {weeks.map((week: any, index: number) => (
-              <TabsContent key={`week-${index + 1}`} value={`week${index + 1}`} className="py-4 px-2">
-                <div className="mb-4">
-                  <h3 className="text-lg font-medium">{week.theme || `Week ${index + 1}`}</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  {week.workouts?.map((workout: any, workoutIndex: number) => 
-                    renderWorkoutCard(workout, workoutIndex)
-                  )}
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-        </div>
+        <Accordion type="single" collapsible className="w-full border-t border-border/30 rounded-lg overflow-hidden">
+          {weeks.map((week: ProgramWeek, index: number) => (
+            <CollapsibleProgramWeek
+              key={`week-${index + 1}`}
+              weekNumber={index + 1}
+              theme={week.theme}
+              workouts={week.workouts || []}
+            />
+          ))}
+        </Accordion>
         
         {program.start_date && (
           <Card>
