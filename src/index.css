@@ -77,8 +77,9 @@
     @apply bg-background text-foreground font-body;
   }
 
+  /* Fix: Changed from trying to apply font-display to using font-family directly */
   h1, h2, h3, h4, h5, h6, button, .font-display {
-    @apply font-display;
+    font-family: 'Cooper Lt BT', serif;
   }
 }
 
