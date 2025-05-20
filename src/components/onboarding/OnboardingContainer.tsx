@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -54,7 +55,9 @@ const OnboardingContainer = () => {
         throw new Error("Authentication required");
       }
       
-      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/generate-cycle-events`, {
+      // Use the correct way to get the Supabase URL - using string literal with project ID
+      const supabaseUrl = "https://sxeglgdcrfpfgtdexeje.supabase.co";
+      const response = await fetch(`${supabaseUrl}/functions/v1/generate-cycle-events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
