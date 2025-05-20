@@ -1,10 +1,12 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +38,9 @@ import { CalendarIcon, ArrowRight, ArrowLeft } from "lucide-react";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const maxSteps = 4;
 
   // First form schema
@@ -102,18 +106,48 @@ const OnboardingPage = () => {
     setStep(4);
   };
 
-  const completeOnboarding = () => {
-    // Combine all form data and submit
-    const profileData = {
-      ...basicForm.getValues(),
-      ...trainingForm.getValues(),
-      ...oneRMForm.getValues(),
-    };
-    console.log("Complete profile data:", profileData);
+  const completeOnboarding = async () => {
+    if (!user) {
+      toast.error("User not found. Please sign in again.");
+      navigate("/auth");
+      return;
+    }
     
-    // In a real app, this would send the data to the backend
-    // For now, just navigate to the home page
-    navigate("/");
+    try {
+      setIsSubmitting(true);
+      
+      // Combine all form data
+      const profileData = {
+        id: user.id,
+        cycle_length: basicForm.getValues().cycleLength,
+        last_period: basicForm.getValues().lastPeriod,
+        goal: trainingForm.getValues().goal,
+        training_age: trainingForm.getValues().trainingAge,
+        one_rm: {
+          squat: oneRMForm.getValues().squat || 0,
+          bench: oneRMForm.getValues().bench || 0,
+          deadlift: oneRMForm.getValues().deadlift || 0,
+          hip_thrust: oneRMForm.getValues().hipThrust || 0,
+        }
+      };
+      
+      console.log("Saving profile data:", profileData);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('id', user.id);
+      
+      if (error) throw error;
+      
+      toast.success("Profile setup complete!");
+      navigate("/");
+    } catch (error: any) {
+      console.error("Error saving profile:", error);
+      toast.error(error.message || "Failed to save profile data");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleNext = () => {
@@ -420,10 +454,11 @@ const OnboardingPage = () => {
                 <ArrowLeft className="mr-2 w-4 h-4" /> Back
               </Button>
               <Button 
-                onClick={completeOnboarding} 
+                onClick={completeOnboarding}
+                disabled={isSubmitting}
                 className="w-2/3 ml-2 bg-cs-purple hover:bg-cs-purple-dark"
               >
-                Get Started <ArrowRight className="ml-2 w-4 h-4" />
+                {isSubmitting ? "Saving..." : "Get Started"} <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </div>
           </div>
