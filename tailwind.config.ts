@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,29 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+                // Custom colors for CycleStrong Coach
+                'cs-purple': {
+                    light: '#9b87f5',
+                    DEFAULT: '#8875e9',
+                    dark: '#7E69AB'
+                },
+                'cs-pink': {
+                    light: '#FFDEE2',
+                    DEFAULT: '#FFC8CF',
+                    dark: '#FFB2BB'
+                },
+                'cs-neutral': {
+                    100: '#F1F1F1',
+                    200: '#E1E1E1',
+                    300: '#C8C8C8', 
+                    400: '#A3A3A3',
+                    500: '#8E9196',
+                    600: '#666666',
+                    700: '#4D4D4D',
+                    800: '#333333',
+                    900: '#1A1F2C'
+                }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +107,17 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+                'pulse-ring': {
+                    '0%': { transform: 'scale(0.8)', opacity: '0.8' },
+                    '50%': { transform: 'scale(1)', opacity: '0.4' },
+                    '100%': { transform: 'scale(0.8)', opacity: '0.8' }
+                }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+                'pulse-ring': 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
 			}
 		}
 	},
