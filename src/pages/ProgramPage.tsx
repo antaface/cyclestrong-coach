@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,10 +9,42 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// Define a type for our program data structure
+interface ProgramWeek {
+  theme?: string;
+  workouts: Array<{
+    day: number;
+    focus: string;
+    notes?: string;
+    exercises: Array<{
+      name: string;
+      sets: number;
+      reps: string | number;
+      intensity?: string;
+      notes?: string;
+    }>;
+  }>;
+}
+
+interface ProgramData {
+  title?: string;
+  description?: string;
+  weeks: ProgramWeek[];
+  raw_output?: string;
+}
+
+interface Program {
+  id: string;
+  user_id: string;
+  plan_json: ProgramData;
+  start_date: string;
+  created_at: string;
+}
+
 const ProgramPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [program, setProgram] = useState<any | null>(null);
+  const [program, setProgram] = useState<Program | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeWeek, setActiveWeek] = useState("week1");
@@ -37,11 +68,30 @@ const ProgramPage = () => {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        setProgram(data[0]);
-        // Set active week to the first week
-        const weekKeys = Object.keys(data[0].plan_json.weeks || {}).filter(key => key.startsWith('week'));
-        if (weekKeys.length > 0) {
-          setActiveWeek(weekKeys[0]);
+        // Ensure plan_json is properly parsed as an object
+        const programData = data[0];
+        
+        // Handle the case where plan_json might be a string
+        if (typeof programData.plan_json === 'string') {
+          try {
+            programData.plan_json = JSON.parse(programData.plan_json);
+          } catch (e) {
+            console.error("Failed to parse program JSON:", e);
+            // Provide a default structure
+            programData.plan_json = { title: "Program", description: "Could not parse program data", weeks: [] };
+          }
+        }
+        
+        // Ensure the weeks array exists
+        if (!programData.plan_json.weeks) {
+          programData.plan_json.weeks = [];
+        }
+        
+        setProgram(programData as Program);
+        
+        // Set active week to the first week if weeks exist
+        if (programData.plan_json.weeks.length > 0) {
+          setActiveWeek("week1");
         }
       } else {
         setProgram(null);
@@ -146,7 +196,7 @@ const ProgramPage = () => {
     const programData = program.plan_json;
     const weeks = programData.weeks || [];
     
-    if (!weeks || !weeks.length) {
+    if (!weeks.length) {
       return (
         <div className="text-center p-4 text-muted-foreground">
           Program structure not found
@@ -208,25 +258,27 @@ const ProgramPage = () => {
           </Tabs>
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Program Start Date</CardTitle>
-            <CardDescription>
-              {new Date(program.start_date).toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button variant="outline" size="sm" onClick={() => navigate('/calendar')} className="w-full">
-              <Calendar className="h-4 w-4 mr-2" />
-              View in Calendar
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </CardFooter>
-        </Card>
+        {program.start_date && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Program Start Date</CardTitle>
+              <CardDescription>
+                {new Date(program.start_date).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <Button variant="outline" size="sm" onClick={() => navigate('/calendar')} className="w-full">
+                <Calendar className="h-4 w-4 mr-2" />
+                View in Calendar
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
       </div>
     );
   };

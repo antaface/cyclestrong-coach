@@ -111,7 +111,26 @@ Each week should include:
 - 3–5 training days
 - For each day: list exercises, sets x reps, target RIR, and optional coaching notes
 
-Return a JSON object containing all 4 weeks, grouped by week number.`;
+Return a JSON object with this structure:
+{
+  "title": "4-Week Hypertrophy Mesocycle",
+  "description": "Custom program based on menstrual cycle phases",
+  "weeks": [
+    {
+      "theme": "Week 1: Foundation",
+      "workouts": [
+        {
+          "day": 1,
+          "focus": "Lower Body",
+          "notes": "Optional notes",
+          "exercises": [
+            { "name": "Exercise name", "sets": 3, "reps": "8-10", "intensity": "RPE 7-8", "notes": "Optional notes" }
+          ]
+        }
+      ]
+    }
+  ]
+}`;
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -155,15 +174,23 @@ Return a JSON object containing all 4 weeks, grouped by week number.`;
       
       // Parse the JSON
       const program = JSON.parse(jsonContent);
+      
+      // Ensure the program has the required structure
+      if (!program.weeks || !Array.isArray(program.weeks)) {
+        // If the weeks array is missing or not an array, add it with empty content
+        program.weeks = [];
+      }
+      
       return program;
     } catch (parseError) {
       console.error("Error parsing GPT response as JSON:", parseError);
       console.log("Raw GPT response:", generatedContent);
       
-      // Fallback: return the raw text and let the client handle it
+      // Return a fallback structure that matches our expected format
       return { 
         title: "Training Program",
         description: "Note: The program could not be formatted as structured data. Please see the raw output below.",
+        weeks: [],
         raw_output: generatedContent
       };
     }
