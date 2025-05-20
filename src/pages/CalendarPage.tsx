@@ -1,7 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, isSameMonth, isSameDay, isToday } from "date-fns";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,47 +17,23 @@ import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
 import { cn } from "@/lib/utils";
 import { CyclePhase } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
-// Mock cycle data (in a real app this would come from an API)
-const generateMockCycleData = (startDate: Date, cycleLength: number = 28) => {
-  const days = [];
-  const follicularDays = Math.floor(cycleLength * 0.3); // 30% of cycle
-  const ovulationDays = Math.floor(cycleLength * 0.1); // 10% of cycle
-  const lutealDays = Math.floor(cycleLength * 0.4); // 40% of cycle
-  const menstrualDays = cycleLength - follicularDays - ovulationDays - lutealDays; // Remaining days
-  
-  for (let i = 0; i < cycleLength; i++) {
-    let phase: CyclePhase;
-    if (i < menstrualDays) {
-      phase = CyclePhase.MENSTRUAL;
-    } else if (i < menstrualDays + follicularDays) {
-      phase = CyclePhase.FOLLICULAR;
-    } else if (i < menstrualDays + follicularDays + ovulationDays) {
-      phase = CyclePhase.OVULATION;
-    } else {
-      phase = CyclePhase.LUTEAL;
-    }
-    
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + i);
-    
-    days.push({
-      date,
-      phase,
-      day: i + 1
-    });
-  }
-  
-  return days;
-};
+interface CycleEvent {
+  date: string;
+  phase: CyclePhase;
+}
 
 const CalendarPage = () => {
+  const { user } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [cycleData, setCycleData] = useState(
-    generateMockCycleData(new Date(2025, 4, 5)) // Mock last period start date
-  );
+  const [cycleEvents, setCycleEvents] = useState<CycleEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [nextPeriodDate, setNextPeriodDate] = useState<string | null>(null);
+  const [daysUntilNextPeriod, setDaysUntilNextPeriod] = useState<number | null>(null);
   
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
@@ -66,9 +42,59 @@ const CalendarPage = () => {
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(addMonths(currentDate, -1));
   
+  useEffect(() => {
+    const fetchCycleEvents = async () => {
+      if (!user) return;
+      
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('cycle_events')
+          .select('date, phase')
+          .eq('user_id', user.id)
+          .order('date', { ascending: true });
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setCycleEvents(data as CycleEvent[]);
+          
+          // Find next menstrual phase date
+          const today = new Date().toISOString().split('T')[0];
+          const nextMenstrualEvent = data
+            .filter(event => 
+              event.phase === CyclePhase.MENSTRUAL && 
+              event.date >= today
+            )
+            .sort((a, b) => a.date.localeCompare(b.date))[0];
+          
+          if (nextMenstrualEvent) {
+            setNextPeriodDate(nextMenstrualEvent.date);
+            
+            // Calculate days until next period
+            const currentDate = new Date();
+            const nextDate = new Date(nextMenstrualEvent.date);
+            const diffTime = nextDate.getTime() - currentDate.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            setDaysUntilNextPeriod(diffDays);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cycle events:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchCycleEvents();
+  }, [user]);
+  
   const getDayClass = (day: Date) => {
-    // Find if this day is in the cycle data
-    const cycleDay = cycleData.find(d => isSameDay(d.date, day));
+    // Format date to match the format in cycleEvents
+    const formattedDate = day.toISOString().split('T')[0];
+    
+    // Find if this day is in the cycle events
+    const cycleDay = cycleEvents.find(d => d.date === formattedDate);
     
     if (!cycleDay) return "cycle-day-empty";
     
@@ -90,7 +116,9 @@ const CalendarPage = () => {
   };
   
   const getPhaseInfo = (day: Date) => {
-    const cycleDay = cycleData.find(d => isSameDay(d.date, day));
+    const formattedDate = day.toISOString().split('T')[0];
+    const cycleDay = cycleEvents.find(d => d.date === formattedDate);
+    
     if (!cycleDay) return null;
     
     const phaseInfo = {
@@ -122,63 +150,75 @@ const CalendarPage = () => {
   return (
     <>
       <PageContainer title="Cycle Calendar">
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-4">
-            <Button variant="ghost" onClick={prevMonth} className="p-1 h-8 w-8">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <h2 className="font-medium">
-              {format(currentDate, 'MMMM yyyy')}
-            </h2>
-            <Button variant="ghost" onClick={nextMonth} className="p-1 h-8 w-8">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-10">
+            <Loader2 className="h-10 w-10 animate-spin text-cs-purple" />
+            <p className="mt-4 text-cs-neutral-600">Loading your cycle data...</p>
           </div>
-          
-          <div className="grid grid-cols-7 gap-1 text-center mb-2">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-xs font-medium text-cs-neutral-500">
-                {day}
-              </div>
-            ))}
+        ) : cycleEvents.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10">
+            <Info className="h-10 w-10 text-cs-purple" />
+            <p className="mt-4 text-cs-neutral-600">No cycle data available. Please complete your profile setup.</p>
           </div>
-          
-          <div className="grid grid-cols-7 gap-1">
-            {Array.from({ length: firstDayOfMonth.getDay() }).map((_, i) => (
-              <div key={`empty-start-${i}`} className="p-1"></div>
-            ))}
+        ) : (
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-4">
+              <Button variant="ghost" onClick={prevMonth} className="p-1 h-8 w-8">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <h2 className="font-medium">
+                {format(currentDate, 'MMMM yyyy')}
+              </h2>
+              <Button variant="ghost" onClick={nextMonth} className="p-1 h-8 w-8">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
             
-            {daysInMonth.map((day) => {
-              const isCurrentMonth = isSameMonth(day, currentDate);
-              return (
-                <div
-                  key={day.toString()}
-                  className={cn(
-                    "p-1 flex items-center justify-center",
-                    !isCurrentMonth && "opacity-50"
-                  )}
-                >
-                  <button
-                    onClick={() => handleDayClick(day)}
+            <div className="grid grid-cols-7 gap-1 text-center mb-2">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                <div key={day} className="text-xs font-medium text-cs-neutral-500">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-7 gap-1">
+              {Array.from({ length: firstDayOfMonth.getDay() }).map((_, i) => (
+                <div key={`empty-start-${i}`} className="p-1"></div>
+              ))}
+              
+              {daysInMonth.map((day) => {
+                const isCurrentMonth = isSameMonth(day, currentDate);
+                return (
+                  <div
+                    key={day.toString()}
                     className={cn(
-                      "cycle-day",
-                      getDayClass(day),
-                      isToday(day) && "ring-2 ring-cs-purple"
+                      "p-1 flex items-center justify-center",
+                      !isCurrentMonth && "opacity-50"
                     )}
                   >
-                    {day.getDate()}
-                  </button>
-                </div>
-              );
-            })}
-            
-            {Array.from({
-              length: 6 - lastDayOfMonth.getDay()
-            }).map((_, i) => (
-              <div key={`empty-end-${i}`} className="p-1"></div>
-            ))}
+                    <button
+                      onClick={() => handleDayClick(day)}
+                      className={cn(
+                        "cycle-day",
+                        getDayClass(day),
+                        isToday(day) && "ring-2 ring-cs-purple"
+                      )}
+                    >
+                      {day.getDate()}
+                    </button>
+                  </div>
+                );
+              })}
+              
+              {Array.from({
+                length: 6 - lastDayOfMonth.getDay()
+              }).map((_, i) => (
+                <div key={`empty-end-${i}`} className="p-1"></div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         
         <div className="mt-6">
           <div className="flex justify-between items-center mb-2">
@@ -208,17 +248,19 @@ const CalendarPage = () => {
           </div>
         </div>
         
-        <Card className="mt-6">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Upcoming Menstrual Phase</CardTitle>
-            <CardDescription>Starting in 12 days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-cs-neutral-600">
-              Consider planning a deload week to align with your upcoming menstrual phase. This is a good time to focus on recovery and mobility work.
-            </p>
-          </CardContent>
-        </Card>
+        {nextPeriodDate && daysUntilNextPeriod !== null && (
+          <Card className="mt-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Upcoming Menstrual Phase</CardTitle>
+              <CardDescription>Starting in {daysUntilNextPeriod} days</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-cs-neutral-600">
+                Consider planning a deload week to align with your upcoming menstrual phase. This is a good time to focus on recovery and mobility work.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </PageContainer>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -226,9 +268,7 @@ const CalendarPage = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {format(selectedDay, "EEEE, MMMM d")} - Cycle Day {
-                  cycleData.find(d => isSameDay(d.date, selectedDay))?.day || "N/A"
-                }
+                {format(selectedDay, "EEEE, MMMM d")}
               </DialogTitle>
               <DialogDescription>
                 {getPhaseInfo(selectedDay)?.title || "Outside tracked cycle"}
