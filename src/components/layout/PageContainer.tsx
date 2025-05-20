@@ -11,8 +11,8 @@ interface PageContainerProps {
 const PageContainer = ({ title, children, showBackButton = false }: PageContainerProps) => {
   return (
     <div className="max-w-screen-md mx-auto min-h-screen h-full pb-24 relative">
-      <div className="sticky top-0 z-10 backdrop-blur-sm border-b border-white/20">
-        <div className="px-6 py-4 flex justify-between items-center">
+      <div className="sticky top-0 z-50 backdrop-blur-sm border-b border-white/20 bg-white/20">
+        <div className="px-6 py-3 flex justify-between items-center">
           <AppHeader title={title} showBackButton={showBackButton} />
           <UserMenu />
         </div>

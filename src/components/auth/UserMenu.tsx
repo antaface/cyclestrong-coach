@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { User, LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const UserMenu = () => {
   const { user, signOut } = useAuth();
@@ -17,8 +18,12 @@ const UserMenu = () => {
   if (!user) {
     return (
       <Link to="/auth">
-        <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full">
-          <User className="h-4 w-4" />
+        <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback>
+              <User className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
         </Button>
       </Link>
     );
@@ -27,8 +32,15 @@ const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full">
-          <User className="h-4 w-4" />
+        <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.user_metadata?.avatar_url || undefined} />
+            <AvatarFallback>
+              {user.user_metadata?.name?.[0]?.toUpperCase() || 
+               user.email?.[0]?.toUpperCase() || 
+               <User className="h-4 w-4" />}
+            </AvatarFallback>
+          </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
