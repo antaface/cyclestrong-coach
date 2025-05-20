@@ -33,11 +33,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', userId)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        // If we get a "No rows found" error, it means the profile doesn't exist,
+        // which indicates the user needs onboarding
+        if (error.code === 'PGRST116') {
+          setNeedsOnboarding(true);
+          return;
+        }
+        throw error;
+      }
       
-      // If the user has a profile but hasn't set their last_period manually
-      // (it's just the default value from signup), they need onboarding
-      setNeedsOnboarding(!data.one_rm || !data.cycle_length);
+      // If the user has a profile but critical fields are missing, they need onboarding
+      setNeedsOnboarding(!data.one_rm || !data.cycle_length || !data.goal);
     } catch (error) {
       console.error("Error checking onboarding status:", error);
       setNeedsOnboarding(true);

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -20,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -53,7 +53,7 @@ const OnboardingPage = () => {
   // Second form schema
   const trainingFormSchema = z.object({
     trainingAge: z.string(),
-    goal: z.string(),
+    goal: z.string().min(10, "Please describe your fitness goals in at least 10 characters"),
   });
 
   // Third form schema
@@ -77,7 +77,7 @@ const OnboardingPage = () => {
     resolver: zodResolver(trainingFormSchema),
     defaultValues: {
       trainingAge: "beginner",
-      goal: "strength",
+      goal: "",
     },
   });
 
@@ -293,24 +293,17 @@ const OnboardingPage = () => {
                 name="goal"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Primary Training Goal</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your primary goal" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="strength">Strength</SelectItem>
-                        <SelectItem value="muscle">Muscle Building</SelectItem>
-                        <SelectItem value="toning">Toning & Definition</SelectItem>
-                        <SelectItem value="performance">Athletic Performance</SelectItem>
-                        <SelectItem value="general">General Fitness</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Training Goals</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Describe your fitness goals in detail..." 
+                        className="min-h-24 resize-none"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Tell us what you're hoping to achieve with your training
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
