@@ -3,3 +3,6 @@ project_id = "sxeglgdcrfpfgtdexeje"
 
 [functions.generate-cycle-events]
 verify_jwt = true
+
+[functions.generate-program]
+verify_jwt = true

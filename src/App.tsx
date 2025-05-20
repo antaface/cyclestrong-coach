@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage";
 import CalendarPage from "./pages/CalendarPage";
 import WorkoutPage from "./pages/WorkoutPage";
 import ProfilePage from "./pages/ProfilePage";
+import ProgramPage from "./pages/ProgramPage";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { AuthProvider } from "./context/AuthContext";
@@ -47,6 +48,11 @@ const App = () => (
             <Route path="/profile" element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/program" element={
+              <ProtectedRoute>
+                <ProgramPage />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
