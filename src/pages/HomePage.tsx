@@ -44,7 +44,7 @@ const HomePage = () => {
             <p className="text-muted-foreground">
               You're in your <span className="font-medium text-primary">Follicular Phase</span> - Day 10 of your cycle
             </p>
-            <Card className="mt-4 hover-card">
+            <Card className="mt-4">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Today's Focus</CardTitle>
               </CardHeader>
@@ -91,7 +91,7 @@ const HomePage = () => {
           
           {/* Estimated 1RM chart */}
           <div>
-            <Card className="hover-card">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Estimated 1RM Progress</CardTitle>
                 <CardDescription>Tracked against cycle day</CardDescription>
@@ -150,7 +150,7 @@ const HomePage = () => {
           
           {/* Weekly Training Volume */}
           <div>
-            <Card className="hover-card">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Weekly Training Volume</CardTitle>
                 <CardDescription>Total weight (kg) lifted per week</CardDescription>
@@ -187,7 +187,7 @@ const HomePage = () => {
           {/* Program Progress */}
           <div>
             <h3 className="font-display text-lg mb-3">Current Program Progress</h3>
-            <Card className="hover-card">
+            <Card>
               <CardContent className="pt-6">
                 <div className="space-y-6">
                   <div>

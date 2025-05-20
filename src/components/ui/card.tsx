@@ -10,11 +10,14 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border border-border/30 bg-card text-card-foreground shadow-joyful transition-all duration-200 hover:shadow-md",
+      "rounded-lg border border-border/30 bg-white/50 text-card-foreground shadow-joyful relative overflow-hidden",
       className
     )}
     {...props}
-  />
+  >
+    <div className="absolute inset-0 bg-noise opacity-15 pointer-events-none" />
+    <div className="relative z-10">{props.children}</div>
+  </div>
 ))
 Card.displayName = "Card"
 
