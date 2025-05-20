@@ -1,32 +1,22 @@
 
-import { ReactNode } from "react";
 import AppHeader from "./AppHeader";
+import UserMenu from "@/components/auth/UserMenu";
 
 interface PageContainerProps {
-  children: ReactNode;
-  title?: string;
-  showBackButton?: boolean;
-  headerRight?: ReactNode;
-  noPadding?: boolean;
+  title: string;
+  children: React.ReactNode;
 }
 
-const PageContainer = ({
-  children,
-  title,
-  showBackButton = false,
-  headerRight,
-  noPadding = false
-}: PageContainerProps) => {
+const PageContainer = ({ title, children }: PageContainerProps) => {
   return (
-    <div className="app-container">
-      {title && (
-        <AppHeader 
-          title={title} 
-          showBackButton={showBackButton} 
-          rightContent={headerRight} 
-        />
-      )}
-      <div className={noPadding ? "" : "page-container"}>
+    <div className="max-w-screen-md mx-auto bg-white min-h-screen h-full pb-24">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <div className="px-4 py-4 flex justify-between items-center">
+          <AppHeader title={title} />
+          <UserMenu />
+        </div>
+      </div>
+      <div className="p-4">
         {children}
       </div>
     </div>
