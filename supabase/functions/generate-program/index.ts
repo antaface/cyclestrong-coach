@@ -10,6 +10,7 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY') ?? '';
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -54,8 +55,8 @@ serve(async (req) => {
       });
     }
     
-    // Generate a 4-week mesocycle based on user profile data
-    const program = generateProgram(profile);
+    // Generate the program using OpenAI
+    const program = await generateProgramWithGPT(profile);
     
     // Save the generated program to the database
     const { error: saveError } = await supabaseClient
@@ -84,168 +85,90 @@ serve(async (req) => {
   }
 });
 
-// Function to generate a 4-week training program based on user profile
-function generateProgram(profile: any) {
-  const { goal, training_age, cycle_length, one_rm } = profile;
-  
-  // Map training age to a difficulty level
-  const difficultyByTrainingAge: Record<string, number> = {
-    'beginner': 1,
-    'intermediate': 2,
-    'advanced': 3
-  };
-  
-  const difficulty = difficultyByTrainingAge[training_age] || 1;
-  
-  // Create a 4-week mesocycle with different phases
-  const weeks = [];
-  
-  // Define exercise selection based on goals and available strength data
-  const hasOneRmData = one_rm && Object.values(one_rm).some(val => val !== null && val !== 0);
-  
-  // Default exercises if no 1RM data available
-  let primaryExercises = ['Squat', 'Bench Press', 'Deadlift', 'Hip Thrust'];
-  let secondaryExercises = ['Lunges', 'Dumbbell Press', 'Romanian Deadlift', 'Glute Bridge'];
-  let accessoryExercises = ['Leg Extension', 'Lat Pulldown', 'Bicep Curl', 'Tricep Extension'];
-  
-  // If 1RM data is available, prioritize exercises with known values
-  if (hasOneRmData) {
-    primaryExercises = [];
-    
-    if (one_rm.squat) primaryExercises.push('Squat');
-    if (one_rm.bench) primaryExercises.push('Bench Press');
-    if (one_rm.deadlift) primaryExercises.push('Deadlift');
-    if (one_rm.hip_thrust) primaryExercises.push('Hip Thrust');
-    
-    // Add default exercises if user doesn't have enough 1RM data
-    if (primaryExercises.length < 3) {
-      ['Squat', 'Bench Press', 'Deadlift', 'Hip Thrust'].forEach(exercise => {
-        if (!primaryExercises.includes(exercise)) {
-          primaryExercises.push(exercise);
-          if (primaryExercises.length >= 3) return;
-        }
-      });
-    }
+async function generateProgramWithGPT(profile: any) {
+  if (!OPENAI_API_KEY) {
+    throw new Error("OpenAI API key is not configured");
   }
+
+  const { cycle_length, last_period, training_age, goal, one_rm } = profile;
   
-  // Generate the 4-week program
-  for (let week = 1; week <= 4; week++) {
-    const workouts = [];
+  // Format the date as YYYY-MM-DD
+  const formattedLastPeriod = new Date(last_period).toISOString().split('T')[0];
+  
+  const systemPrompt = `You are a certified strength coach trained in menstrual-aware programming and evidence-based periodization. Create a 4-week hypertrophy mesocycle for a female lifter using the following inputs:
+- cycle_length: ${cycle_length}
+- last_period: ${formattedLastPeriod}
+- training_age: ${training_age}
+- goal: ${goal}
+${one_rm ? `- one_rm data: ${JSON.stringify(one_rm)}` : ''}
+
+Generate training blocks based on menstrual phases:
+- Follicular (Day 1–14): increase volume and intensity
+- Ovulation (~Day 15): optional 1RM testing
+- Luteal (Day 16–28): slightly reduce load, more recovery focus
+
+Each week should include:
+- 3–5 training days
+- For each day: list exercises, sets x reps, target RIR, and optional coaching notes
+
+Return a JSON object containing all 4 weeks, grouped by week number.`;
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o', // Using GPT-4o for best quality results
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Generate a personalized training program based on my profile information.' }
+        ],
+        temperature: 0.7,
+        max_tokens: 4000
+      })
+    });
+
+    const responseData = await response.json();
     
-    // Determine number of workouts per week based on training age
-    const workoutsPerWeek = Math.min(3 + difficulty, 5);
+    if (responseData.error) {
+      console.error("OpenAI API error:", responseData.error);
+      throw new Error(`OpenAI API error: ${responseData.error.message}`);
+    }
     
-    for (let day = 1; day <= workoutsPerWeek; day++) {
-      // Weekly progression - increase intensity each week
-      const intensityFactor = 0.7 + (week * 0.05);
+    const generatedContent = responseData.choices[0].message.content;
+    
+    // Try to parse the JSON from the response
+    try {
+      // Extract JSON if it's wrapped in markdown code blocks
+      let jsonContent = generatedContent;
       
-      // Focus on different body parts for different days
-      let focus = 'Full Body';
-      if (workoutsPerWeek >= 4) {
-        switch (day) {
-          case 1: focus = 'Lower Body'; break;
-          case 2: focus = 'Upper Body'; break;
-          case 3: focus = 'Lower Body'; break;
-          case 4: focus = 'Upper Body'; break;
-          case 5: focus = 'Full Body'; break;
-        }
-      } else if (workoutsPerWeek === 3) {
-        switch (day) {
-          case 1: focus = 'Lower Body'; break;
-          case 2: focus = 'Upper Body'; break;
-          case 3: focus = 'Full Body'; break;
-        }
+      // Check if the content is wrapped in markdown code blocks
+      const jsonRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
+      const match = jsonRegex.exec(generatedContent);
+      
+      if (match && match[1]) {
+        jsonContent = match[1].trim();
       }
       
-      // Select exercises based on focus
-      const exercises = selectExercises(focus, primaryExercises, secondaryExercises, accessoryExercises);
+      // Parse the JSON
+      const program = JSON.parse(jsonContent);
+      return program;
+    } catch (parseError) {
+      console.error("Error parsing GPT response as JSON:", parseError);
+      console.log("Raw GPT response:", generatedContent);
       
-      // Create workout structure
-      const workout = {
-        day: day,
-        focus: focus,
-        exercises: exercises.map(exercise => {
-          // Calculate sets and reps based on week progression and training age
-          const sets = Math.min(3 + Math.floor(difficulty / 2) + Math.floor((week - 1) / 2), 5);
-          let reps = 12 - (week * 2);
-          
-          // Adjust rep range for certain exercises
-          if (exercise.includes('Deadlift')) {
-            reps = Math.max(reps - 2, 4);
-          }
-          
-          return {
-            name: exercise,
-            sets: sets,
-            reps: reps,
-            intensity: `${Math.round(intensityFactor * 100)}% of 1RM`,
-            notes: week === 4 ? "Push for a new PR!" : "Focus on form and control"
-          };
-        })
+      // Fallback: return the raw text and let the client handle it
+      return { 
+        title: "Training Program",
+        description: "Note: The program could not be formatted as structured data. Please see the raw output below.",
+        raw_output: generatedContent
       };
-      
-      workouts.push(workout);
     }
-    
-    weeks.push({
-      week: week,
-      theme: week === 4 ? "Peak Intensity" : `Progressive Overload - Week ${week}`,
-      workouts: workouts
-    });
+  } catch (error) {
+    console.error("Error calling OpenAI API:", error);
+    throw new Error(`Failed to generate program: ${error.message}`);
   }
-  
-  return {
-    title: `${goal.charAt(0).toUpperCase() + goal.slice(1)} Focus 4-Week Program`,
-    description: `Personalized 4-week training program focused on ${goal} for a ${training_age} lifter`,
-    start_date: new Date().toISOString().split('T')[0],
-    weeks: weeks
-  };
-}
-
-// Helper function to select exercises based on the day's focus
-function selectExercises(
-  focus: string,
-  primaryExercises: string[],
-  secondaryExercises: string[],
-  accessoryExercises: string[]
-): string[] {
-  let selectedExercises: string[] = [];
-  
-  // Shuffle exercises to create variety
-  const shuffled = {
-    primary: [...primaryExercises].sort(() => 0.5 - Math.random()),
-    secondary: [...secondaryExercises].sort(() => 0.5 - Math.random()),
-    accessory: [...accessoryExercises].sort(() => 0.5 - Math.random())
-  };
-  
-  switch (focus) {
-    case 'Lower Body':
-      selectedExercises = [
-        shuffled.primary.find(e => e.includes('Squat') || e.includes('Deadlift') || e.includes('Hip')) || shuffled.primary[0],
-        shuffled.secondary.find(e => e.includes('Lunge') || e.includes('Romanian') || e.includes('Glute')) || shuffled.secondary[0],
-        shuffled.accessory.find(e => e.includes('Leg')) || shuffled.accessory[0],
-      ];
-      break;
-      
-    case 'Upper Body':
-      selectedExercises = [
-        shuffled.primary.find(e => e.includes('Bench') || e.includes('Press')) || shuffled.primary[0],
-        shuffled.secondary.find(e => e.includes('Press') || e.includes('Row')) || shuffled.secondary[0],
-        shuffled.accessory.find(e => e.includes('Lat') || e.includes('Curl') || e.includes('Tricep')) || shuffled.accessory[0],
-      ];
-      break;
-      
-    case 'Full Body':
-      selectedExercises = [
-        shuffled.primary[0],
-        shuffled.secondary[0],
-        shuffled.accessory[0],
-      ];
-      break;
-  }
-  
-  // Add 1-2 more accessory exercises
-  selectedExercises.push(...shuffled.accessory.slice(1, 3).filter(e => !selectedExercises.includes(e)));
-  
-  return selectedExercises;
 }
