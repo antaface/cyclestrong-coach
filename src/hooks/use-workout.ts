@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Workout, WorkoutExercise } from '@/types';
+import { Workout, WorkoutExercise, CyclePhase } from '@/types';
 
 export function useWorkout(workoutId?: string) {
   const queryClient = useQueryClient();
@@ -43,7 +43,7 @@ export function useWorkout(workoutId?: string) {
         workout_id: "mock-workout",
         program_id: "mock-program",
         date: new Date(),
-        phase: "follicular",
+        phase: CyclePhase.FOLLICULAR,
         session_json: JSON.stringify({
           name: "Lower Body Strength - Follicular Phase",
           description: "Focus on progressive overload and challenging yourself with heavier weights",
@@ -96,13 +96,13 @@ export function useWorkout(workoutId?: string) {
     }
 
     // Parse session_json to get exercises
-    const parsedSession = JSON.parse(data.session_json);
+    const parsedSession = JSON.parse(data.session_json as string);
     return {
       workout_id: data.id,
       program_id: data.program_id,
       date: new Date(data.date),
-      phase: data.phase,
-      session_json: data.session_json,
+      phase: data.phase as CyclePhase,
+      session_json: data.session_json as string,
       completed: data.completed,
       exercises: parsedSession.exercises || []
     };
@@ -119,13 +119,16 @@ export function useWorkout(workoutId?: string) {
       if (!workoutId) return mockUpdateWorkout(updatedWorkout);
       
       // Update session_json with the latest exercises
-      const sessionData = JSON.parse(updatedWorkout.session_json);
+      const sessionData = typeof updatedWorkout.session_json === 'string' 
+        ? JSON.parse(updatedWorkout.session_json)
+        : updatedWorkout.session_json;
+      
       sessionData.exercises = updatedWorkout.exercises;
       
       const { error } = await supabase
         .from('workouts')
         .update({
-          session_json: JSON.stringify(sessionData),
+          session_json: sessionData,
           completed: updatedWorkout.completed
         })
         .eq('id', workoutId);
