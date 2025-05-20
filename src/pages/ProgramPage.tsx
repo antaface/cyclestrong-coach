@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -31,6 +32,14 @@ interface ProgramData {
   description?: string;
   weeks: ProgramWeek[];
   raw_output?: string;
+}
+
+interface SupabaseProgram {
+  id: string;
+  user_id: string;
+  plan_json: unknown; // Using unknown initially since we need to parse it
+  start_date: string;
+  created_at: string;
 }
 
 interface Program {
@@ -68,29 +77,22 @@ const ProgramPage = () => {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        // Ensure plan_json is properly parsed as an object
-        const programData = data[0];
+        // Get the raw Supabase program data
+        const supabaseProgram = data[0] as SupabaseProgram;
         
-        // Handle the case where plan_json might be a string
-        if (typeof programData.plan_json === 'string') {
-          try {
-            programData.plan_json = JSON.parse(programData.plan_json);
-          } catch (e) {
-            console.error("Failed to parse program JSON:", e);
-            // Provide a default structure
-            programData.plan_json = { title: "Program", description: "Could not parse program data", weeks: [] };
-          }
-        }
+        // Create a properly typed program object
+        const typedProgram: Program = {
+          id: supabaseProgram.id,
+          user_id: supabaseProgram.user_id,
+          start_date: supabaseProgram.start_date,
+          created_at: supabaseProgram.created_at,
+          plan_json: parseProgramData(supabaseProgram.plan_json)
+        };
         
-        // Ensure the weeks array exists
-        if (!programData.plan_json.weeks) {
-          programData.plan_json.weeks = [];
-        }
-        
-        setProgram(programData as Program);
+        setProgram(typedProgram);
         
         // Set active week to the first week if weeks exist
-        if (programData.plan_json.weeks.length > 0) {
+        if (typedProgram.plan_json.weeks.length > 0) {
           setActiveWeek("week1");
         }
       } else {
@@ -101,6 +103,33 @@ const ProgramPage = () => {
       toast.error("Failed to load your program");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Helper function to safely parse program data
+  const parseProgramData = (planJson: unknown): ProgramData => {
+    try {
+      // If plan_json is a string, try to parse it as JSON
+      let parsedData: any = planJson;
+      
+      if (typeof planJson === 'string') {
+        try {
+          parsedData = JSON.parse(planJson);
+        } catch (e) {
+          console.error("Failed to parse program JSON string:", e);
+          return { title: "Program", description: "Could not parse program data", weeks: [] };
+        }
+      }
+      
+      // Ensure weeks array exists
+      if (!parsedData.weeks || !Array.isArray(parsedData.weeks)) {
+        parsedData.weeks = [];
+      }
+      
+      return parsedData as ProgramData;
+    } catch (error) {
+      console.error("Error parsing program data:", error);
+      return { title: "Program", description: "Error parsing program data", weeks: [] };
     }
   };
 

@@ -58,12 +58,15 @@ serve(async (req) => {
     // Generate the program using OpenAI
     const program = await generateProgramWithGPT(profile);
     
+    // Ensure program has the required structure before saving
+    const validatedProgram = ensureValidProgramStructure(program);
+    
     // Save the generated program to the database
     const { error: saveError } = await supabaseClient
       .from('programs')
       .insert({
         user_id: userId,
-        plan_json: program,
+        plan_json: validatedProgram,
         start_date: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
       });
     
@@ -71,7 +74,7 @@ serve(async (req) => {
       throw saveError;
     }
     
-    return new Response(JSON.stringify({ success: true, program }), {
+    return new Response(JSON.stringify({ success: true, program: validatedProgram }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
     
@@ -84,6 +87,29 @@ serve(async (req) => {
     });
   }
 });
+
+// Helper function to ensure program has valid structure
+function ensureValidProgramStructure(program) {
+  // If program is not an object, create a default structure
+  if (typeof program !== 'object' || program === null) {
+    return { 
+      title: "Training Program",
+      description: "Weekly training program",
+      weeks: []
+    };
+  }
+  
+  // Ensure weeks property exists and is an array
+  if (!program.weeks || !Array.isArray(program.weeks)) {
+    program.weeks = [];
+  }
+  
+  // Ensure title and description exist
+  if (!program.title) program.title = "Training Program";
+  if (!program.description) program.description = "Weekly training program";
+  
+  return program;
+}
 
 async function generateProgramWithGPT(profile: any) {
   if (!OPENAI_API_KEY) {
@@ -176,12 +202,7 @@ Return a JSON object with this structure:
       const program = JSON.parse(jsonContent);
       
       // Ensure the program has the required structure
-      if (!program.weeks || !Array.isArray(program.weeks)) {
-        // If the weeks array is missing or not an array, add it with empty content
-        program.weeks = [];
-      }
-      
-      return program;
+      return ensureValidProgramStructure(program);
     } catch (parseError) {
       console.error("Error parsing GPT response as JSON:", parseError);
       console.log("Raw GPT response:", generatedContent);
