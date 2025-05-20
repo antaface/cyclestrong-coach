@@ -23,15 +23,15 @@ const WorkoutExerciseCard = ({
   return (
     <Card key={exercise.id}>
       <CardContent className="p-0">
-        <div className="p-4">
+        <div className="p-6">
           <div className="flex justify-between items-center">
-            <h3 className="font-medium">{exercise.name}</h3>
+            <h3 className="font-display text-lg">{exercise.name}</h3>
             <Dialog>
               <DialogTrigger asChild>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="h-8 border-cs-purple text-cs-purple hover:bg-cs-purple/10"
+                  className="h-8 border-primary text-primary hover:bg-primary/10"
                 >
                   <Video className="w-4 h-4 mr-1" />
                   Form
@@ -42,13 +42,13 @@ const WorkoutExerciseCard = ({
           </div>
           
           {exercise.notes && (
-            <p className="text-xs text-cs-neutral-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {exercise.notes}
             </p>
           )}
           
-          <div className="mt-3">
-            <div className="grid grid-cols-12 gap-1 text-xs text-cs-neutral-500 mb-1">
+          <div className="mt-4">
+            <div className="grid grid-cols-12 gap-1 text-xs text-muted-foreground mb-2 px-1">
               <div className="col-span-1">#</div>
               <div className="col-span-3">Weight</div>
               <div className="col-span-2">Reps</div>
@@ -60,11 +60,11 @@ const WorkoutExerciseCard = ({
               <div 
                 key={`${exercise.id}-set-${setIndex}`}
                 className={cn(
-                  "grid grid-cols-12 gap-1 py-2 items-center text-sm border-t border-gray-100",
-                  set.completed && "bg-cs-neutral-100"
+                  "grid grid-cols-12 gap-1 py-2.5 items-center text-sm border-t border-border/20",
+                  set.completed && "bg-accent/10 rounded-md"
                 )}
               >
-                <div className="col-span-1 font-medium">{setIndex + 1}</div>
+                <div className="col-span-1 font-medium pl-1">{setIndex + 1}</div>
                 <div className="col-span-3">{set.weight} kg</div>
                 <div className="col-span-2">{set.reps}</div>
                 <div className="col-span-2">{set.rir}</div>
@@ -73,10 +73,8 @@ const WorkoutExerciseCard = ({
                     variant={set.completed ? "default" : "outline"}
                     size="sm"
                     className={cn(
-                      "h-8 w-16",
-                      set.completed ? 
-                        "bg-cs-purple hover:bg-cs-purple-dark" : 
-                        "border-cs-purple text-cs-purple hover:bg-cs-purple/10"
+                      "h-9 w-16",
+                      set.completed ? "" : "border-primary text-primary hover:bg-primary/10"
                     )}
                     onClick={() => onSetComplete(exerciseIndex, setIndex)}
                   >

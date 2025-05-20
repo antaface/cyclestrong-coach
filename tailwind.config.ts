@@ -63,28 +63,19 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-                // Custom colors for CycleStrong Coach
-                'cs-purple': {
-                    light: '#9b87f5',
-                    DEFAULT: '#8875e9',
-                    dark: '#7E69AB'
-                },
-                'cs-pink': {
-                    light: '#FFDEE2',
-                    DEFAULT: '#FFC8CF',
-                    dark: '#FFB2BB'
-                },
-                'cs-neutral': {
-                    100: '#F1F1F1',
-                    200: '#E1E1E1',
-                    300: '#C8C8C8', 
-                    400: '#A3A3A3',
-                    500: '#8E9196',
-                    600: '#666666',
-                    700: '#4D4D4D',
-                    800: '#333333',
-                    900: '#1A1F2C'
+                // Joyful Health theme colors
+                'joyful': {
+                    'coral': '#F27261',
+                    'peach': '#F9D5B4',
+                    'clay': '#D4504C',
+                    'green': '#9FB79C',
+                    'cream': '#FFFDF9',
+                    'orange': '#F49E85'
                 }
+			},
+			fontFamily: {
+				'display': ['"Cooper Lt BT"', 'serif'],
+				'body': ['Univers', 'system-ui', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -112,12 +103,17 @@ export default {
                     '0%': { transform: 'scale(0.8)', opacity: '0.8' },
                     '50%': { transform: 'scale(1)', opacity: '0.4' },
                     '100%': { transform: 'scale(0.8)', opacity: '0.8' }
+                },
+                'subtle-bounce': {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-5px)' }
                 }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-                'pulse-ring': 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                'pulse-ring': 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'subtle-bounce': 'subtle-bounce 2s ease-in-out infinite'
 			}
 		}
 	},

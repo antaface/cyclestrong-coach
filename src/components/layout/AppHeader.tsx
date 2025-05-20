@@ -12,18 +12,18 @@ const AppHeader = ({ title, showBackButton = false, rightContent }: AppHeaderPro
   const navigate = useNavigate();
   
   return (
-    <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
-      <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+    <header className="w-full">
+      <div className="flex items-center justify-between">
         <div className="flex items-center">
           {showBackButton && (
             <button 
               onClick={() => navigate(-1)} 
-              className="p-1 mr-2 rounded-full hover:bg-gray-100"
+              className="p-1.5 mr-3 rounded-full hover:bg-accent/10 text-foreground transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
-          <h1 className="text-lg font-bold text-cs-neutral-900">{title}</h1>
+          <h1 className="text-xl font-display text-foreground">{title}</h1>
         </div>
         {rightContent}
       </div>

@@ -48,7 +48,7 @@ const WorkoutPage = () => {
   return (
     <>
       <PageContainer title="Today's Workout">
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Workout summary card with timer display */}
           <div className="flex justify-between items-start">
             <div className="flex-grow">

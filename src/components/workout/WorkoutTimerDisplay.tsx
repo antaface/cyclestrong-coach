@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Play, Pause, RefreshCw } from "lucide-react";
 
 interface WorkoutTimerDisplayProps {
   timer: number;
@@ -18,24 +19,24 @@ const WorkoutTimerDisplay = ({
 }: WorkoutTimerDisplayProps) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="text-center bg-cs-neutral-100 px-3 py-2 rounded-lg">
-        <span className="text-lg font-mono font-medium">{formatTime(timer)}</span>
-        <div className="flex gap-1 mt-1">
+      <div className="text-center bg-accent/10 px-4 py-3 rounded-lg border border-border/30">
+        <span className="font-display text-lg font-medium">{formatTime(timer)}</span>
+        <div className="flex gap-2 mt-2">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-6 w-8 p-0"
+            className="h-7 w-7 p-0 rounded-full bg-accent/10"
             onClick={toggleTimer}
           >
-            {isTimerActive ? "⏸" : "▶️"}
+            {isTimerActive ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-6 w-8 p-0"
+            className="h-7 w-7 p-0 rounded-full bg-accent/10"
             onClick={resetTimer}
           >
-            🔄
+            <RefreshCw className="w-3.5 h-3.5" />
           </Button>
         </div>
       </div>

@@ -64,10 +64,10 @@ const ProfilePage = () => {
   return (
     <>
       <PageContainer title="Profile">
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* User profile header */}
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-cs-purple">
+          <div className="flex items-center space-x-5">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
               <img
                 src={profile.avatar}
                 alt={profile.name}
@@ -75,64 +75,64 @@ const ProfilePage = () => {
               />
             </div>
             <div>
-              <h2 className="font-semibold text-lg">{profile.name}</h2>
-              <p className="text-sm text-cs-neutral-500">{profile.email}</p>
+              <h2 className="font-display text-xl">{profile.name}</h2>
+              <p className="text-sm text-muted-foreground">{profile.email}</p>
             </div>
           </div>
           
           {/* User stats */}
-          <Card>
-            <CardContent className="p-4 space-y-3">
-              <h3 className="font-medium">Current Stats</h3>
+          <Card className="hover-card">
+            <CardContent className="p-6 space-y-4">
+              <h3 className="font-display text-lg">Current Stats</h3>
               
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-cs-neutral-500">Cycle Day</p>
-                  <p className="font-medium">{profile.cycle.currentDay} of {profile.cycle.length}</p>
+                  <p className="text-muted-foreground mb-1">Cycle Day</p>
+                  <p className="font-display text-base">{profile.cycle.currentDay} of {profile.cycle.length}</p>
                 </div>
                 <div>
-                  <p className="text-cs-neutral-500">Current Phase</p>
-                  <p className="font-medium">{getPhaseName(profile.cycle.currentPhase)}</p>
+                  <p className="text-muted-foreground mb-1">Current Phase</p>
+                  <p className="font-display text-base">{getPhaseName(profile.cycle.currentPhase)}</p>
                 </div>
                 <div>
-                  <p className="text-cs-neutral-500">Training Age</p>
-                  <p className="font-medium capitalize">{profile.training.age}</p>
+                  <p className="text-muted-foreground mb-1">Training Age</p>
+                  <p className="font-display text-base capitalize">{profile.training.age}</p>
                 </div>
                 <div>
-                  <p className="text-cs-neutral-500">Goal</p>
-                  <p className="font-medium capitalize">{profile.training.goal}</p>
+                  <p className="text-muted-foreground mb-1">Goal</p>
+                  <p className="font-display text-base capitalize">{profile.training.goal}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           
           {/* 1RM stats */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-medium mb-3">Your One-Rep Maximums</h3>
+          <Card className="hover-card">
+            <CardContent className="p-6">
+              <h3 className="font-display text-lg mb-4">Your One-Rep Maximums</h3>
               
-              <div className="space-y-2">
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-cs-neutral-600">Squat</span>
-                  <span className="font-medium">{profile.training.oneRM.squat} kg</span>
+              <div className="space-y-3">
+                <div className="flex justify-between py-1.5 border-b border-border/20">
+                  <span className="text-muted-foreground">Squat</span>
+                  <span className="font-display">{profile.training.oneRM.squat} kg</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-cs-neutral-600">Bench Press</span>
-                  <span className="font-medium">{profile.training.oneRM.bench} kg</span>
+                <div className="flex justify-between py-1.5 border-b border-border/20">
+                  <span className="text-muted-foreground">Bench Press</span>
+                  <span className="font-display">{profile.training.oneRM.bench} kg</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-cs-neutral-600">Deadlift</span>
-                  <span className="font-medium">{profile.training.oneRM.deadlift} kg</span>
+                <div className="flex justify-between py-1.5 border-b border-border/20">
+                  <span className="text-muted-foreground">Deadlift</span>
+                  <span className="font-display">{profile.training.oneRM.deadlift} kg</span>
                 </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-cs-neutral-600">Hip Thrust</span>
-                  <span className="font-medium">{profile.training.oneRM.hipThrust} kg</span>
+                <div className="flex justify-between py-1.5">
+                  <span className="text-muted-foreground">Hip Thrust</span>
+                  <span className="font-display">{profile.training.oneRM.hipThrust} kg</span>
                 </div>
               </div>
               
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full mt-3">
+                  <Button variant="outline" className="w-full mt-5">
                     Update 1RMs
                   </Button>
                 </DialogTrigger>
@@ -150,14 +150,14 @@ const ProfilePage = () => {
           </Card>
           
           {/* Settings section */}
-          <div className="space-y-3">
-            <h3 className="font-medium px-1">Settings</h3>
+          <div className="space-y-4">
+            <h3 className="font-display text-lg px-1">Settings</h3>
             
-            <Card>
+            <Card className="hover-card">
               <CardContent className="p-0">
-                <div className="flex items-center justify-between p-4">
+                <div className="flex items-center justify-between p-5">
                   <div className="flex items-center">
-                    <Bell className="w-5 h-5 text-cs-purple mr-3" />
+                    <Bell className="w-5 h-5 text-primary mr-4" />
                     <span>Push Notifications</span>
                   </div>
                   <Switch
@@ -165,10 +165,10 @@ const ProfilePage = () => {
                     onCheckedChange={setIsPushNotificationsEnabled}
                   />
                 </div>
-                <Separator />
-                <div className="flex items-center justify-between p-4">
+                <Separator className="bg-border/20" />
+                <div className="flex items-center justify-between p-5">
                   <div className="flex items-center">
-                    <Calendar className="w-5 h-5 text-cs-purple mr-3" />
+                    <Calendar className="w-5 h-5 text-primary mr-4" />
                     <span>Cycle Reminders</span>
                   </div>
                   <Switch
@@ -180,41 +180,41 @@ const ProfilePage = () => {
             </Card>
             
             {/* Menu items */}
-            <Card>
+            <Card className="hover-card">
               <CardContent className="p-0">
-                <button className="w-full flex items-center justify-between p-4">
+                <button className="w-full flex items-center justify-between p-5 hover:bg-accent/5 transition-colors">
                   <div className="flex items-center">
-                    <User className="w-5 h-5 text-cs-purple mr-3" />
+                    <User className="w-5 h-5 text-primary mr-4" />
                     <span>Edit Profile</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-cs-neutral-400" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60" />
                 </button>
                 
-                <Separator />
+                <Separator className="bg-border/20" />
                 
-                <button className="w-full flex items-center justify-between p-4">
+                <button className="w-full flex items-center justify-between p-5 hover:bg-accent/5 transition-colors">
                   <div className="flex items-center">
-                    <Dumbbell className="w-5 h-5 text-cs-purple mr-3" />
+                    <Dumbbell className="w-5 h-5 text-primary mr-4" />
                     <span>Exercise Library</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-cs-neutral-400" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60" />
                 </button>
                 
-                <Separator />
+                <Separator className="bg-border/20" />
                 
-                <button className="w-full flex items-center justify-between p-4">
+                <button className="w-full flex items-center justify-between p-5 hover:bg-accent/5 transition-colors">
                   <div className="flex items-center">
-                    <Settings className="w-5 h-5 text-cs-purple mr-3" />
+                    <Settings className="w-5 h-5 text-primary mr-4" />
                     <span>App Settings</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-cs-neutral-400" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60" />
                 </button>
               </CardContent>
             </Card>
             
             <Button 
               variant="outline" 
-              className="w-full mt-2 border-red-300 text-red-500 hover:bg-red-50 hover:text-red-600"
+              className="w-full mt-2 border-destructive/50 text-destructive hover:bg-destructive/5 hover:text-destructive"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Sign Out

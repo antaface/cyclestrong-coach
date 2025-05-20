@@ -82,41 +82,41 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-cs-purple-light/10 px-4 py-10">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
       <div className="w-full max-w-md">
         {/* Logo and app name */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <div className="inline-block mb-4">
-            <div className="w-20 h-20 rounded-full bg-cs-purple flex items-center justify-center">
-              <Dumbbell className="w-10 h-10 text-white" />
+            <div className="w-24 h-24 rounded-full bg-gradient-to-r from-primary to-joyful-orange flex items-center justify-center">
+              <Dumbbell className="w-12 h-12 text-white animate-subtle-bounce" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-cs-neutral-900">
+          <h1 className="text-3xl font-display text-foreground">
             CycleStrong Coach
           </h1>
-          <p className="text-cs-neutral-600 mt-2">
+          <p className="text-muted-foreground mt-2">
             Science-based strength training tailored to your menstrual cycle
           </p>
         </div>
 
         {/* Auth forms */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-white rounded-xl shadow-joyful p-8 border border-border/20">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 mb-6">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid grid-cols-2 mb-8">
+              <TabsTrigger value="login" className="font-display">Login</TabsTrigger>
+              <TabsTrigger value="signup" className="font-display">Sign Up</TabsTrigger>
             </TabsList>
 
             {/* Login Form */}
             <TabsContent value="login">
               <Form {...loginForm}>
-                <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
+                <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-5">
                   <FormField
                     control={loginForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-foreground">Email</FormLabel>
                         <FormControl>
                           <Input placeholder="name@example.com" {...field} />
                         </FormControl>
@@ -129,7 +129,7 @@ const AuthPage = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-foreground">Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••" {...field} />
                         </FormControl>
@@ -139,7 +139,7 @@ const AuthPage = () => {
                   />
                   <Button 
                     type="submit" 
-                    className="w-full bg-cs-purple hover:bg-cs-purple-dark" 
+                    className="w-full mt-2" 
                     disabled={isLoading}
                   >
                     {isLoading ? "Signing in..." : "Sign In"}
@@ -151,13 +151,13 @@ const AuthPage = () => {
             {/* Signup Form */}
             <TabsContent value="signup">
               <Form {...signupForm}>
-                <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-4">
+                <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-5">
                   <FormField
                     control={signupForm.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel className="text-foreground">Name</FormLabel>
                         <FormControl>
                           <Input placeholder="Your name" {...field} />
                         </FormControl>
@@ -170,7 +170,7 @@ const AuthPage = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-foreground">Email</FormLabel>
                         <FormControl>
                           <Input placeholder="name@example.com" {...field} />
                         </FormControl>
@@ -183,7 +183,7 @@ const AuthPage = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-foreground">Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••" {...field} />
                         </FormControl>
@@ -196,7 +196,7 @@ const AuthPage = () => {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel className="text-foreground">Confirm Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••" {...field} />
                         </FormControl>
@@ -206,7 +206,7 @@ const AuthPage = () => {
                   />
                   <Button 
                     type="submit" 
-                    className="w-full bg-cs-purple hover:bg-cs-purple-dark" 
+                    className="w-full mt-2" 
                     disabled={isLoading}
                   >
                     {isLoading ? "Creating account..." : "Create Account"}
@@ -216,8 +216,8 @@ const AuthPage = () => {
             </TabsContent>
           </Tabs>
 
-          <div className="mt-6 text-center text-sm text-cs-neutral-500">
-            <Link to="/welcome" className="hover:text-cs-purple hover:underline">
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <Link to="/welcome" className="hover:text-primary hover:underline">
               Return to welcome page
             </Link>
           </div>

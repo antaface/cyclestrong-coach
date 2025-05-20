@@ -17,16 +17,16 @@ const WorkoutSummaryCard = ({ workout }: WorkoutSummaryCardProps) => {
 
   return (
     <Card>
-      <CardContent className="p-4">
+      <CardContent className="p-6">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="font-medium text-lg">{workoutDetails.name || 'Today\'s Workout'}</h2>
-            <p className="text-sm text-cs-neutral-600">
+            <h2 className="font-display text-xl mb-1">{workoutDetails.name || 'Today\'s Workout'}</h2>
+            <p className="text-sm text-muted-foreground">
               {workoutDetails.description || 'Complete your workout for today'}
             </p>
-            <div className="flex gap-2 mt-2">
-              <Badge className="bg-cs-purple capitalize">{workout.phase} Phase</Badge>
-              <Badge variant="outline" className="text-cs-neutral-600 border-cs-neutral-300">
+            <div className="flex gap-2 mt-3">
+              <Badge className="capitalize">{workout.phase} Phase</Badge>
+              <Badge variant="outline" className="text-muted-foreground border-border">
                 Cycle Day {/* Would calculate from profile data */}
               </Badge>
             </div>

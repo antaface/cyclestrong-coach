@@ -10,7 +10,7 @@ const CompleteWorkoutButton = ({ isCompleted, onComplete }: CompleteWorkoutButto
   return (
     <div className="pt-4">
       <Button 
-        className="w-full bg-cs-purple hover:bg-cs-purple-dark"
+        className="w-full"
         disabled={isCompleted}
         onClick={onComplete}
       >

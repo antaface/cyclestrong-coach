@@ -30,19 +30,22 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border/30 z-10 shadow-[0_-1px_10px_rgba(0,0,0,0.03)]">
       <div className="max-w-md mx-auto flex justify-around">
         {navItems.map((item) => (
           <Link 
             key={item.path}
             to={item.path} 
             className={cn(
-              "flex flex-col items-center justify-center py-2 px-4",
-              location.pathname === item.path ? "text-cs-purple font-medium" : "text-cs-neutral-500"
+              "flex flex-col items-center justify-center py-3 px-5",
+              location.pathname === item.path ? "text-primary font-medium" : "text-muted-foreground"
             )}
           >
-            <item.icon className="w-5 h-5 mb-1" />
-            <span className="text-xs">{item.label}</span>
+            <item.icon className={cn(
+              "w-5 h-5 mb-1 transition-all",
+              location.pathname === item.path ? "text-primary" : "text-muted-foreground"
+            )} />
+            <span className="text-xs font-display">{item.label}</span>
           </Link>
         ))}
       </div>
