@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import WorkoutPageLoading from "@/components/workout/WorkoutPageLoading";
 
@@ -30,7 +30,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <WorkoutPageLoading />;
   }
 
-  return user ? <>{children}</> : null;
+  return user ? <Outlet /> : null;
 };
 
 export default ProtectedRoute;

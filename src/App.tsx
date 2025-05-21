@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider"
@@ -12,14 +13,14 @@ import ProgramPage from './pages/ProgramPage';
 import WorkoutPage from './pages/WorkoutPage';
 import CalendarPage from './pages/CalendarPage';
 import OnboardingPage from './pages/OnboardingPage';
-import NotFound from './pages/NotFoundPage';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import FormCheckPage from './pages/FormCheckPage';
 
 function App() {
   const [mounted, setMounted] = useState(false)
-  const { themeMode } = useTheme()
+  const { theme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -34,7 +35,7 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           
           {/* Protected routes */}
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute children={null} />}>
             <Route path="/home" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/program" element={<ProgramPage />} />
