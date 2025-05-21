@@ -8,9 +8,10 @@ interface ExerciseListProps {
   exercises: WorkoutExercise[];
   workoutId: string;
   onSetComplete: (exerciseIndex: number, setIndex: number) => void;
+  onAddSet?: (exerciseIndex: number) => void;
 }
 
-const ExerciseList = ({ exercises, workoutId, onSetComplete }: ExerciseListProps) => {
+const ExerciseList = ({ exercises, workoutId, onSetComplete, onAddSet }: ExerciseListProps) => {
   return (
     <>
       <div className="space-y-4">

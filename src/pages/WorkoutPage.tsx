@@ -31,7 +31,8 @@ const WorkoutPage = () => {
     resetTimer, 
     formatTime,
     toggleSetCompleted,
-    completeWorkout
+    completeWorkout,
+    addSetToExercise
   } = useWorkout(); // No ID means we get mock data for now
   
   const handleStartSession = (template: WorkoutTemplate) => {
@@ -98,22 +99,19 @@ const WorkoutPage = () => {
             </>
           ) : (
             <>
-              {/* Display active workout - no card div */}
-              <div className="flex flex-col gap-4">
-                <WorkoutSummaryCard workout={workout!} />
-                
-                <div className="flex items-center justify-between">
-                  <div className="text-2xl font-mono">{formatTime(timer)}</div>
-                  <div className="flex space-x-2">
-                    <WorkoutTimerDisplay 
-                      timer={timer} 
-                      isTimerActive={isTimerActive} 
-                      formatTime={formatTime}
-                      toggleTimer={toggleTimer}
-                      resetTimer={resetTimer}
-                    />
-                  </div>
-                </div>
+              {/* Display workout title without card div */}
+              <WorkoutSummaryCard workout={workout!} />
+              
+              {/* Timer and buttons in one row without card div */}
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-2xl font-mono">{formatTime(timer)}</div>
+                <WorkoutTimerDisplay 
+                  timer={timer} 
+                  isTimerActive={isTimerActive} 
+                  formatTime={formatTime}
+                  toggleTimer={toggleTimer}
+                  resetTimer={resetTimer}
+                />
               </div>
               
               {/* Exercise list */}
@@ -121,6 +119,7 @@ const WorkoutPage = () => {
                 exercises={workout!.exercises || []} 
                 workoutId={workout!.workout_id}
                 onSetComplete={toggleSetCompleted}
+                onAddSet={addSetToExercise}
               />
               
               {/* Complete workout button */}

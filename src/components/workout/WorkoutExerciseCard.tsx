@@ -38,6 +38,11 @@ const WorkoutExerciseCard = ({
     setSetReps(prev => ({...prev, [setIndex]: value}));
   };
 
+  const handleAddSet = () => {
+    // This function would need to be passed down from useWorkout
+    console.log("Add set clicked for exercise:", exercise.id);
+  };
+
   return (
     <Card key={exercise.id}>
       <CardContent className="p-3">
@@ -112,11 +117,12 @@ const WorkoutExerciseCard = ({
                   onClick={() => onSetComplete(exerciseIndex, setIndex)}
                   className={cn(
                     "h-6 w-6 rounded-sm flex items-center justify-center transition-all duration-200",
-                    "border-2 transform active:scale-95",
+                    "border-2 transform active:scale-90",
                     set.completed 
-                      ? "bg-primary border-primary text-white" 
-                      : "border-gray-300 bg-white"
+                      ? "bg-joyful-coral border-joyful-coral text-white" 
+                      : "border-gray-300 bg-white hover:border-joyful-coral/50"
                   )}
+                  aria-label={set.completed ? "Mark set incomplete" : "Mark set complete"}
                 >
                   {set.completed && <Check className="h-4 w-4" />}
                 </button>
@@ -127,7 +133,8 @@ const WorkoutExerciseCard = ({
           <div className="mt-3 flex justify-center">
             <Button 
               variant="ghost"
-              className="px-0 h-auto text-primary font-medium hover:bg-transparent hover:underline"
+              className="px-0 h-auto text-joyful-coral font-medium hover:bg-transparent hover:underline"
+              onClick={handleAddSet}
             >
               <Plus className="h-4 w-4 mr-1" /> Add Set
             </Button>
