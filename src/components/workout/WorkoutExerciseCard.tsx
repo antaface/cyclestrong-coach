@@ -120,10 +120,10 @@ const WorkoutExerciseCard = ({
                   onClick={() => onSetComplete(exerciseIndex, setIndex)}
                   className={cn(
                     "h-6 w-6 rounded-sm flex items-center justify-center transition-all duration-200",
-                    "border-2 transform active:scale-90",
+                    "border transform active:scale-90",
                     set.completed 
                       ? "bg-joyful-coral border-joyful-coral text-white" 
-                      : "border-white bg-transparent hover:border-joyful-coral/50 border-gray-300"
+                      : "border-gray-300 bg-transparent hover:border-joyful-coral/50"
                   )}
                   aria-label={set.completed ? "Mark set incomplete" : "Mark set complete"}
                 >

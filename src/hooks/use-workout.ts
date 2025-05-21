@@ -163,31 +163,35 @@ export function useWorkout(workoutId?: string) {
   const toggleSetCompleted = (exerciseIndex: number, setIndex: number) => {
     if (!workout) return;
     
-    const updatedWorkout = { ...workout };
-    const set = updatedWorkout.exercises![exerciseIndex].sets[setIndex];
-    set.completed = !set.completed;
+    const updatedWorkout = JSON.parse(JSON.stringify(workout)) as Workout;
+    const exercise = updatedWorkout.exercises?.[exerciseIndex];
     
-    updateWorkoutMutation.mutate(updatedWorkout);
+    if (exercise && exercise.sets && exercise.sets[setIndex]) {
+      exercise.sets[setIndex].completed = !exercise.sets[setIndex].completed;
+      updateWorkoutMutation.mutate(updatedWorkout);
+    }
   };
 
   // Add a new set to an exercise
   const addSetToExercise = (exerciseIndex: number) => {
     if (!workout || !workout.exercises) return;
     
-    const updatedWorkout = { ...workout };
+    const updatedWorkout = JSON.parse(JSON.stringify(workout)) as Workout;
     const exercise = updatedWorkout.exercises[exerciseIndex];
     
-    // Copy the last set as a template for the new set
-    const lastSet = exercise.sets[exercise.sets.length - 1];
-    const newSet = { 
-      weight: lastSet.weight, 
-      reps: lastSet.reps, 
-      rir: lastSet.rir, 
-      completed: false 
-    };
-    
-    exercise.sets.push(newSet);
-    updateWorkoutMutation.mutate(updatedWorkout);
+    if (exercise && exercise.sets && exercise.sets.length > 0) {
+      // Copy the last set as a template for the new set
+      const lastSet = exercise.sets[exercise.sets.length - 1];
+      const newSet = { 
+        weight: lastSet.weight, 
+        reps: lastSet.reps, 
+        rir: lastSet.rir, 
+        completed: false 
+      };
+      
+      exercise.sets.push(newSet);
+      updateWorkoutMutation.mutate(updatedWorkout);
+    }
   };
 
   // Complete the whole workout
