@@ -74,7 +74,7 @@ export const CalendarGrid = ({
                 className={cn(
                   "cycle-day",
                   getDayClass(day),
-                  isToday(day) && "ring-2 ring-cs-purple"
+                  isToday(day) && "ring-2 ring-offset-1 ring-offset-background ring-primary"
                 )}
               >
                 {day.getDate()}

@@ -20,19 +20,19 @@ export const CalendarLegend = ({ nextPeriodDate, daysUntilNextPeriod }: Calendar
       
       <div className="grid grid-cols-2 gap-2">
         <div className="flex items-center">
-          <span className="w-4 h-4 bg-cs-pink rounded-full mr-2"></span>
+          <span className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: "#F6B5B5" }}></span>
           <span className="text-sm">Menstrual</span>
         </div>
         <div className="flex items-center">
-          <span className="w-4 h-4 bg-cs-purple-light rounded-full mr-2"></span>
+          <span className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: "#FFE6A7" }}></span>
           <span className="text-sm">Follicular</span>
         </div>
         <div className="flex items-center">
-          <span className="w-4 h-4 bg-cs-purple rounded-full mr-2"></span>
+          <span className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: "#A3E4B8" }}></span>
           <span className="text-sm">Ovulation</span>
         </div>
         <div className="flex items-center">
-          <span className="w-4 h-4 bg-cs-pink-dark rounded-full mr-2"></span>
+          <span className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: "#FDD59C" }}></span>
           <span className="text-sm">Luteal</span>
         </div>
       </div>

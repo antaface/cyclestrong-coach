@@ -134,24 +134,24 @@
     @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer;
   }
 
-  /* Updated cycle phase colors */
+  /* Updated cycle phase colors with improved contrast */
   .cycle-day-menstrual {
-    background-color: #FDDADA; /* light rose */
+    background-color: #F6B5B5; /* soft rose */
     @apply text-gray-800;
   }
   
   .cycle-day-follicular {
-    background-color: #FCE6D7; /* peach */
+    background-color: #FFE6A7; /* buttery yellow */
     @apply text-gray-800;
   }
   
   .cycle-day-ovulation {
-    background-color: #E2F0CB; /* pale green */
+    background-color: #A3E4B8; /* fresh mint green */
     @apply text-gray-800;
   }
   
   .cycle-day-luteal {
-    background-color: #FFEFD6; /* light yellow */
+    background-color: #FDD59C; /* warm peach-orange */
     @apply text-gray-800;
   }
   
