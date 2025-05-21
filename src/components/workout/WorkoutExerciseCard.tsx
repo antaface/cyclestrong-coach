@@ -70,7 +70,7 @@ const WorkoutExerciseCard = ({
             <div className="col-span-1 text-left">#</div>
             <div className="col-span-3">Weight</div>
             <div className="col-span-3">Reps</div>
-            <div className="col-span-2">RIR</div>
+            <div className="col-span-2 text-center">RIR</div>
             <div className="col-span-3 text-right">Done</div>
           </div>
           
