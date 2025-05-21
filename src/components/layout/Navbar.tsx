@@ -42,7 +42,7 @@ const Navbar = () => {
             key={item.path}
             to={item.path} 
             className={cn(
-              "flex flex-col items-center justify-center py-2 px-3", // Reduced from py-3 px-5
+              "flex flex-col items-center justify-center py-3 px-5",
               location.pathname === item.path ? "text-primary font-medium" : "text-muted-foreground"
             )}
           >
