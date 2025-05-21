@@ -47,7 +47,7 @@ export function useFormUpload() {
       if (data) {
         setVideoUrl(data.publicUrl);
         // In a real app, we'd call an Edge Function to analyze the video here
-        // For now, we'll simulate with a mock analysis
+        // TODO: Integrate with GPT/Vision API for actual form analysis
         
         // Create a form review record
         const { error: insertError } = await supabase.from('form_reviews').insert({

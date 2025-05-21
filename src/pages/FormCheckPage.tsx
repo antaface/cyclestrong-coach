@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
+import { useFormUpload } from "@/hooks/use-form-upload";
+import { v4 as uuidv4 } from 'uuid';
 
 interface FormCheckResult {
   score: number;
@@ -30,6 +32,7 @@ const FormCheckPage = () => {
   const [liftType, setLiftType] = useState(exerciseName || "");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<FormCheckResult | null>(null);
+  const { isUploading, uploadFormVideo } = useFormUpload();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -39,14 +42,19 @@ const FormCheckPage = () => {
     }
   };
 
-  const handleCheckForm = () => {
+  const handleCheckForm = async () => {
     if (!videoFile || !liftType) return;
     
     setIsAnalyzing(true);
     
-    // Simulate loading time for analysis
-    setTimeout(() => {
-      // Mock results based on the exercise type
+    // Generate a mock workout ID if one wasn't provided
+    const mockWorkoutId = workoutId || uuidv4();
+    
+    try {
+      // Upload the video and save form review data
+      await uploadFormVideo(mockWorkoutId, liftType, videoFile);
+      
+      // Set mock results
       const mockResults: Record<string, FormCheckResult> = {
         "Squat": {
           score: 7.5,
@@ -93,8 +101,11 @@ const FormCheckPage = () => {
       
       // Get results specific to the lift type or use default
       setResult(mockResults[liftType] || mockResults.default);
+    } catch (error) {
+      console.error("Error during form check:", error);
+    } finally {
       setIsAnalyzing(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -143,10 +154,10 @@ const FormCheckPage = () => {
               
               <Button 
                 className="w-full"
-                disabled={!videoFile || !liftType || isAnalyzing}
+                disabled={!videoFile || !liftType || isAnalyzing || isUploading}
                 onClick={handleCheckForm}
               >
-                {isAnalyzing ? "Analyzing..." : "Check Form"}
+                {isAnalyzing || isUploading ? "Processing..." : "Check Form"}
               </Button>
             </div>
           </Card>
