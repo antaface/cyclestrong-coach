@@ -95,9 +95,10 @@
     @apply font-display text-button-secondary py-3.5 px-4;
   }
   
-  /* Secondary text style */
+  /* Secondary text style - fixed circular dependency */
   .text-secondary {
-    @apply text-secondary text-secondary-text;
+    @apply text-secondary-text;
+    color: #5F5F5F; /* Using the value directly instead of the circular reference */
   }
 }
 
