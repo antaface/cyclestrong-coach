@@ -64,7 +64,7 @@ const FormResultsSection = ({ result }: { result: FormCheckResultProps | null })
           <div className="space-y-4">
             <h3 className="font-medium text-foreground">Form Notes</h3>
             <div className="space-y-3">
-              {result.notes.map((note, index) => (
+              {result.notes && result.notes.map((note, index) => (
                 <Card key={index} className="bg-white/80 shadow-sm p-3 border-none">
                   <div className="flex items-start gap-3">
                     <div className="bg-primary/10 text-primary rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 mt-0.5">
