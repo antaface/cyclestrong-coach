@@ -63,19 +63,27 @@
   
   /* Typography resets */
   h1, .h1 {
-    @apply font-display text-h1 mt-4 mb-2;
+    @apply font-display text-h1 mt-2 mb-2; /* Reduced margin-top from mt-4 to mt-2 */
   }
   
   h2, .h2 {
-    @apply font-display text-h2 mt-3 mb-2;
+    @apply font-display text-h2 mt-2 mb-2; /* Reduced margin-top from mt-3 to mt-2 */
   }
   
   h3, .h3 {
-    @apply font-display text-h3 mt-2 mb-1;
+    @apply font-display text-h3 mt-2 mb-1; /* Kept this already compact spacing */
   }
   
   p {
-    @apply mb-2 text-body;
+    @apply mb-3 text-body; /* Changed from mb-2 to mb-3 for 12px paragraph spacing */
+  }
+  
+  p + p {
+    @apply mt-3; /* 12px spacing between paragraphs */
+  }
+  
+  h1 + p, h2 + p, h3 + p {
+    @apply mt-2; /* 8px spacing from heading to paragraph */
   }
   
   label {
@@ -88,11 +96,11 @@
   
   /* Button typography */
   button.btn-primary {
-    @apply font-display font-bold text-button-primary uppercase py-3.5 px-4;
+    @apply font-display font-bold text-button-primary uppercase py-3 px-4; /* Reduced from py-3.5 to py-3 */
   }
   
   button.btn-secondary {
-    @apply font-display text-button-secondary py-3.5 px-4;
+    @apply font-display text-button-secondary py-3 px-4; /* Reduced from py-3.5 to py-3 */
   }
   
   /* Secondary text style - fixed circular dependency */
@@ -110,11 +118,11 @@
   }
 
   .page-container {
-    @apply px-4 py-4; /* Reduced from px-6 py-6 to px-4 py-4 */
+    @apply px-4 py-3; /* Reduced from py-4 to py-3 */
   }
 
   .form-container {
-    @apply space-y-2; /* Changed from space-y-6 to space-y-2 to match 8px spacing system */
+    @apply space-y-2;
   }
 
   .habit-ring {
@@ -150,7 +158,7 @@
   }
 
   .joyful-card {
-    @apply rounded-lg p-4 border border-border/30; /* Changed from p-6 to p-4 */
+    @apply rounded-lg p-4 border border-border/30 mb-4; /* Added mb-4 for 16px spacing between cards */
     background-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     position: relative;
@@ -174,7 +182,7 @@
   }
 
   .joyful-button {
-    @apply joyful-gradient text-white rounded-md px-6 py-3.5 font-display font-bold uppercase text-button-primary transform transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.98];
+    @apply joyful-gradient text-white rounded-md px-4 py-3 font-display font-bold uppercase text-button-primary transform transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.98]; /* Reduced from px-6 py-3.5 to px-4 py-3 */
   }
 }
 
@@ -187,7 +195,15 @@
     @apply transition-all duration-200;
   }
   
-  /* 8px spacing system utilities */
+  /* 8px spacing system utilities - optimized for mobile */
+  .section-padding {
+    @apply p-4; /* 16px padding all around */
+  }
+  
+  .section-spacing {
+    @apply mb-4; /* 16px bottom margin between sections */
+  }
+  
   .mt-xs { margin-top: 8px; }
   .mt-sm { margin-top: 16px; }
   .mt-md { margin-top: 24px; }

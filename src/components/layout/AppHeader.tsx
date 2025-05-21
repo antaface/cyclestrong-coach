@@ -18,7 +18,7 @@ const AppHeader = ({ title, showBackButton = false, rightContent }: AppHeaderPro
           {showBackButton && (
             <button 
               onClick={() => navigate(-1)} 
-              className="p-1.5 mr-3 rounded-full hover:bg-accent/10 text-foreground transition-colors"
+              className="p-1 mr-2 rounded-full hover:bg-accent/10 text-foreground transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>

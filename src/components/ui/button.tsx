@@ -22,10 +22,10 @@ const buttonVariants = cva(
         accent: "bg-accent text-accent-foreground hover:bg-accent/80 hover:scale-[1.03] font-medium text-button-secondary",
       },
       size: {
-        default: "h-12 px-6 py-3.5", // Increased padding for finger tap zones
-        sm: "h-10 rounded-md px-4 py-3",
-        lg: "h-14 rounded-md px-8 text-base py-3.5",
-        icon: "h-10 w-10",
+        default: "h-11 px-4 py-3", // Changed from h-12 px-6 py-3.5 to h-11 px-4 py-3
+        sm: "h-9 rounded-md px-3 py-2", // Reduced from h-10 px-4 py-3
+        lg: "h-12 rounded-md px-6 text-base py-3", // Reduced from h-14 px-8 py-3.5
+        icon: "h-9 w-9", // Reduced from h-10 w-10
       },
     },
     defaultVariants: {
