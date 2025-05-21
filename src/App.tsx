@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider"
-import { useTheme } from 'next-themes'
 import { Toaster } from "@/components/ui/toaster"
 
 import LandingPage from './pages/LandingPage';
@@ -20,7 +19,6 @@ import FormCheckPage from './pages/FormCheckPage';
 
 function App() {
   const [mounted, setMounted] = useState(false)
-  const { theme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -28,7 +26,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/landing" element={<LandingPage />} />
