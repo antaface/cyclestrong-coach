@@ -17,7 +17,7 @@ const FormCheckPage = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [liftType, setLiftType] = useState(exerciseName || "");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const { isUploading, uploadFormVideo } = useFormUpload();
+  const { isUploading, uploadAndSaveForm } = useFormUpload();
   const { result, setResult, getMockResultsForLiftType } = useFormCheckResults();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,11 +41,27 @@ const FormCheckPage = () => {
     const mockWorkoutId = workoutId || uuidv4();
     
     try {
-      // Upload the video and save form review data
-      await uploadFormVideo(mockWorkoutId, liftType, videoFile);
+      // Get mock results based on lift type
+      const mockResults = getMockResultsForLiftType(liftType);
       
-      // Set mock results based on lift type
-      setResult(getMockResultsForLiftType(liftType));
+      // Create mock issues for database storage
+      const mockIssues = mockResults.notes.map((note, index) => ({
+        timestamp: `00:${(index + 1) * 5}`,
+        issue: note,
+        fix: `Focus on ${['form', 'technique', 'position', 'stability'][index % 4]}`
+      }));
+      
+      // Upload the video and save form review data
+      await uploadAndSaveForm(
+        mockWorkoutId, 
+        liftType, 
+        videoFile, 
+        mockResults.score,
+        mockIssues
+      );
+      
+      // Set results for display
+      setResult(mockResults);
     } catch (error) {
       console.error("Error during form check:", error);
     } finally {

@@ -3,15 +3,22 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
+import { useFormStorage } from "@/hooks/use-form-storage";
+import { useFormDatabase } from "@/hooks/use-form-database";
 
 export function useFormUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  
+  const { uploadFormVideo } = useFormStorage();
+  const { saveFormReview } = useFormDatabase();
 
-  const uploadFormVideo = async (
+  const uploadAndSaveForm = async (
     workoutId: string,
     exerciseName: string,
-    videoFile: File
+    videoFile: File,
+    score: number,
+    issues: any[]
   ) => {
     if (!videoFile) {
       toast({
@@ -25,62 +32,21 @@ export function useFormUpload() {
     try {
       setIsUploading(true);
 
-      // Create a unique filename
-      const fileExt = videoFile.name.split('.').pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `form-reviews/${workoutId}/${fileName}`;
-
       // Upload video to storage
-      const { error: uploadError } = await supabase.storage
-        .from('form-videos')
-        .upload(filePath, videoFile);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Get the public URL
-      const { data } = supabase.storage
-        .from('form-videos')
-        .getPublicUrl(filePath);
-
-      if (data) {
-        setVideoUrl(data.publicUrl);
-        // In a real app, we'd call an Edge Function to analyze the video here
-        // TODO: Integrate with GPT/Vision API for actual form analysis
+      const videoUrl = await uploadFormVideo(workoutId, videoFile);
+      
+      if (videoUrl) {
+        setVideoUrl(videoUrl);
         
-        // Create a form review record
-        const { error: insertError } = await supabase.from('form_reviews').insert({
-          workout_id: workoutId,
-          exercise: exerciseName,
-          score: Math.floor(Math.random() * 8) + 3, // Random score between 3-10
-          issues_json: {
-            issues: [
-              {
-                timestamp: "00:05",
-                issue: "Knees caving in slightly",
-                fix: "Push knees out as you descend"
-              },
-              {
-                timestamp: "00:12",
-                issue: "Losing lower back position",
-                fix: "Maintain core bracing throughout the lift"
-              }
-            ]
-          },
-          video_url: data.publicUrl
-        });
-
-        if (insertError) {
-          throw insertError;
-        }
+        // Save form review record
+        await saveFormReview(workoutId, exerciseName, score, issues, videoUrl);
 
         toast({
           title: "Form analysis complete",
           description: "Your form has been analyzed. Check the results!",
         });
 
-        return data.publicUrl;
+        return videoUrl;
       }
     } catch (error) {
       toast({
@@ -98,6 +64,6 @@ export function useFormUpload() {
   return {
     isUploading,
     videoUrl,
-    uploadFormVideo
+    uploadAndSaveForm
   };
 }
