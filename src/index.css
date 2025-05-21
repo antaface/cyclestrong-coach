@@ -1,24 +1,7 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: 'Cooper Lt BT';
-  src: url('/fonts/CooperLtBTW08-Regular.woff2') format('woff2'),
-       url('/fonts/CooperLtBTW08-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Univers';
-  src: url('/fonts/univers.woff2') format('woff2'),
-       url('/fonts/univers.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 @layer base {
   :root {
@@ -73,14 +56,48 @@
   }
 
   body {
-    @apply text-foreground font-body;
+    @apply text-foreground bg-background font-body text-body;
     background: linear-gradient(180deg, rgba(242,114,97,0.5) 0%, rgba(244,158,133,0.5) 100%);
     background-attachment: fixed;
   }
-
-  /* Fix: Changed from trying to apply font-display to using font-family directly */
-  h1, h2, h3, h4, h5, h6, button, .font-display {
-    font-family: 'Cooper Lt BT', serif;
+  
+  /* Typography resets */
+  h1, .h1 {
+    @apply font-display text-h1 mt-4 mb-2;
+  }
+  
+  h2, .h2 {
+    @apply font-display text-h2 mt-3 mb-2;
+  }
+  
+  h3, .h3 {
+    @apply font-display text-h3 mt-2 mb-1;
+  }
+  
+  p {
+    @apply mb-2 text-body;
+  }
+  
+  label {
+    @apply font-author text-label;
+  }
+  
+  input::placeholder {
+    @apply text-placeholder text-placeholder;
+  }
+  
+  /* Button typography */
+  button.btn-primary {
+    @apply font-display font-bold text-button-primary uppercase py-3.5 px-4;
+  }
+  
+  button.btn-secondary {
+    @apply font-display text-button-secondary py-3.5 px-4;
+  }
+  
+  /* Secondary text style */
+  .text-secondary {
+    @apply text-secondary text-secondary-text;
   }
 }
 
@@ -92,11 +109,11 @@
   }
 
   .page-container {
-    @apply px-6 py-6;
+    @apply px-4 py-4; /* Reduced from px-6 py-6 to px-4 py-4 */
   }
 
   .form-container {
-    @apply space-y-6;
+    @apply space-y-2; /* Changed from space-y-6 to space-y-2 to match 8px spacing system */
   }
 
   .habit-ring {
@@ -132,7 +149,7 @@
   }
 
   .joyful-card {
-    @apply rounded-lg p-6 border border-border/30;
+    @apply rounded-lg p-4 border border-border/30; /* Changed from p-6 to p-4 */
     background-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     position: relative;
@@ -156,7 +173,7 @@
   }
 
   .joyful-button {
-    @apply joyful-gradient text-white rounded-md px-6 py-2.5 font-medium transform transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.98];
+    @apply joyful-gradient text-white rounded-md px-6 py-3.5 font-display font-bold uppercase text-button-primary transform transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.98];
   }
 }
 
@@ -168,4 +185,20 @@
   .hover-card {
     @apply transition-all duration-200;
   }
+  
+  /* 8px spacing system utilities */
+  .mt-xs { margin-top: 8px; }
+  .mt-sm { margin-top: 16px; }
+  .mt-md { margin-top: 24px; }
+  .mt-lg { margin-top: 32px; }
+  
+  .mb-xs { margin-bottom: 8px; }
+  .mb-sm { margin-bottom: 16px; }
+  .mb-md { margin-bottom: 24px; }
+  .mb-lg { margin-bottom: 32px; }
+  
+  .py-xs { padding-top: 8px; padding-bottom: 8px; }
+  .py-sm { padding-top: 16px; padding-bottom: 16px; }
+  .py-md { padding-top: 24px; padding-bottom: 24px; }
+  .py-lg { padding-top: 32px; padding-bottom: 32px; }
 }

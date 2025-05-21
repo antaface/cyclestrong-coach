@@ -23,7 +23,7 @@ const AppHeader = ({ title, showBackButton = false, rightContent }: AppHeaderPro
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
-          <h1 className="text-xl font-body text-foreground">{title}</h1>
+          <h1 className="text-h1 font-display text-foreground">{title}</h1>
         </div>
         {rightContent}
       </div>

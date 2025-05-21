@@ -10,21 +10,21 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-primary to-[#F49E85] text-primary-foreground hover:scale-[1.03] hover:shadow-md active:scale-[0.98]",
+        default: "bg-gradient-to-r from-primary to-[#F49E85] text-primary-foreground hover:scale-[1.03] hover:shadow-md active:scale-[0.98] font-bold uppercase text-button-primary",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:scale-[1.03]",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:scale-[1.03] font-bold uppercase text-button-primary",
         outline:
-          "border border-input bg-background hover:bg-accent/10 hover:text-accent-foreground hover:scale-[1.02]",
+          "border border-input bg-background hover:bg-accent/10 hover:text-accent-foreground hover:scale-[1.02] font-medium text-button-secondary",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:scale-[1.03]",
-        ghost: "hover:bg-accent/10 hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        accent: "bg-accent text-accent-foreground hover:bg-accent/80 hover:scale-[1.03]",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:scale-[1.03] font-medium text-button-secondary",
+        ghost: "hover:bg-accent/10 hover:text-accent-foreground font-medium text-button-secondary",
+        link: "text-primary underline-offset-4 hover:underline font-medium text-button-secondary",
+        accent: "bg-accent text-accent-foreground hover:bg-accent/80 hover:scale-[1.03] font-medium text-button-secondary",
       },
       size: {
-        default: "h-11 px-6 py-2.5",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-12 rounded-md px-8 text-base",
+        default: "h-12 px-6 py-3.5", // Increased padding for finger tap zones
+        sm: "h-10 rounded-md px-4 py-3",
+        lg: "h-14 rounded-md px-8 text-base py-3.5",
         icon: "h-10 w-10",
       },
     },

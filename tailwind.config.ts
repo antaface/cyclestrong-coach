@@ -71,12 +71,51 @@ export default {
                     'green': '#9FB79C',
                     'cream': '#FFFDF9',
                     'orange': '#F49E85'
-                }
+                },
+                // Add text color for secondary text
+                'secondary-text': '#5F5F5F',
+                'placeholder': '#9A9A9A',
 			},
 			fontFamily: {
-				'display': ['"Cooper Lt BT"', 'serif'],
-				'body': ['Univers', 'system-ui', 'sans-serif'],
+				'display': ['Author', 'system-ui', 'sans-serif'],
+				'body': ['Author', 'system-ui', 'sans-serif'],
+                'author': ['Author', 'system-ui', 'sans-serif'],
 			},
+            fontSize: {
+                'h1': ['24px', {
+                    lineHeight: '1.3',
+                    letterSpacing: '-0.5px',
+                    fontWeight: '700' // Bold
+                }],
+                'h2': ['20px', {
+                    lineHeight: '1.4',
+                    fontWeight: '500' // Medium
+                }],
+                'h3': ['16px', {
+                    lineHeight: '1.4',
+                    fontWeight: '500' // Medium
+                }],
+                'body': ['15px', {
+                    lineHeight: '1.6',
+                    fontWeight: '400' // Regular
+                }],
+                'secondary': ['13px', {
+                    lineHeight: '1.5',
+                    fontWeight: '400' // Regular
+                }],
+                'button-primary': ['15px', {
+                    fontWeight: '700' // Bold
+                }],
+                'button-secondary': ['14px', {
+                    fontWeight: '500' // Medium
+                }],
+                'label': ['14px', {
+                    fontWeight: '400' // Regular
+                }],
+                'placeholder': ['14px', {
+                    fontWeight: '400' // Regular
+                }],
+            },
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -88,6 +127,15 @@ export default {
 			opacity: {
 				'15': '0.15',
 			},
+			spacing: {
+                // 8px spacing system
+                '1': '8px',
+                '2': '16px',
+                '3': '24px',
+                '4': '32px',
+                '5': '40px',
+                '6': '48px',
+            },
 			keyframes: {
 				'accordion-down': {
 					from: {
