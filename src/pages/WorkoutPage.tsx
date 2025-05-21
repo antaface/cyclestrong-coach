@@ -11,9 +11,14 @@ import WorkoutTimerDisplay from "@/components/workout/WorkoutTimerDisplay";
 import WorkoutPageLoading from "@/components/workout/WorkoutPageLoading";
 import WorkoutPageError from "@/components/workout/WorkoutPageError";
 import WorkoutTemplateList from "@/components/workout/WorkoutTemplateList";
-import WorkoutSummaryCard from "@/components/workout/WorkoutSummaryCard";
 import ExerciseList from "@/components/workout/ExerciseList";
 import CompleteWorkoutButton from "@/components/workout/CompleteWorkoutButton";
+
+// Define interface for session json structure
+interface WorkoutSessionJson {
+  name: string;
+  description: string;
+}
 
 const WorkoutPage = () => {
   const { toast } = useToast();
@@ -70,6 +75,24 @@ const WorkoutPage = () => {
     }
   };
 
+  // Helper function to safely get session data
+  const getSessionData = (): WorkoutSessionJson => {
+    if (!workout || !workout.session_json) {
+      return { name: "Workout Session", description: "" };
+    }
+    
+    if (typeof workout.session_json === 'string') {
+      try {
+        return JSON.parse(workout.session_json) as WorkoutSessionJson;
+      } catch (e) {
+        console.error("Error parsing session JSON:", e);
+        return { name: "Workout Session", description: "" };
+      }
+    }
+    
+    return workout.session_json as unknown as WorkoutSessionJson;
+  };
+
   if (phaseLoading || workoutLoading) {
     return <WorkoutPageLoading />;
   }
@@ -77,6 +100,8 @@ const WorkoutPage = () => {
   if (error && activeWorkout) {
     return <WorkoutPageError />;
   }
+  
+  const sessionData = getSessionData();
   
   return (
     <>
@@ -101,18 +126,9 @@ const WorkoutPage = () => {
             <>
               {/* Display workout title without card div */}
               <div className="mb-6">
-                <h2 className="text-xl font-display">{workout?.session_json ? 
-                  (typeof workout.session_json === 'string' ? 
-                    JSON.parse(workout.session_json).name : 
-                    workout.session_json.name) : 
-                  "Workout Session"}
-                </h2>
+                <h2 className="text-xl font-display">{sessionData.name}</h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {workout?.session_json ? 
-                    (typeof workout.session_json === 'string' ? 
-                      JSON.parse(workout.session_json).description : 
-                      workout.session_json.description) : 
-                    ""}
+                  {sessionData.description}
                 </p>
               </div>
               
