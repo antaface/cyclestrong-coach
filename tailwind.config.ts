@@ -71,11 +71,51 @@ export default {
                     'green': '#9FB79C',
                     'cream': '#FFFDF9',
                     'orange': '#F49E85'
-                }
+                },
+                'secondary-text': '#5F5F5F',
 			},
 			fontFamily: {
-				'display': ['"Cooper Lt BT"', 'serif'],
-				'body': ['Univers', 'system-ui', 'sans-serif'],
+				'display': ['Author', 'system-ui', 'sans-serif'],
+				'body': ['Author', 'system-ui', 'sans-serif'],
+				'author': ['Author', 'system-ui', 'sans-serif'], 
+			},
+			fontSize: {
+				'h1': ['24px', {
+					lineHeight: '1.3',
+					fontWeight: '700', // Bold
+				}],
+				'h2': ['20px', {
+					lineHeight: '1.4',
+					fontWeight: '500', // Medium
+				}],
+				'h3': ['16px', {
+					lineHeight: '1.4',
+					fontWeight: '500', // Medium
+				}],
+				'body': ['15px', {
+					lineHeight: '1.6',
+					fontWeight: '400', // Regular
+				}],
+				'secondary-text': ['13px', {
+					lineHeight: '1.5',
+					fontWeight: '400', // Regular
+				}],
+				'button-primary': ['15px', {
+					lineHeight: '1.5',
+					fontWeight: '700', // Bold
+				}],
+				'button-secondary': ['14px', {
+					lineHeight: '1.5',
+					fontWeight: '500', // Medium
+				}],
+				'label': ['14px', {
+					lineHeight: '1.5',
+					fontWeight: '400', // Regular
+				}],
+				'placeholder': ['14px', {
+					lineHeight: '1.5',
+					fontWeight: '400', // Regular
+				}],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

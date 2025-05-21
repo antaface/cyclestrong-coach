@@ -1,24 +1,7 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: 'Cooper Lt BT';
-  src: url('/fonts/CooperLtBTW08-Regular.woff2') format('woff2'),
-       url('/fonts/CooperLtBTW08-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Univers';
-  src: url('/fonts/univers.woff2') format('woff2'),
-       url('/fonts/univers.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 @layer base {
   :root {
@@ -73,14 +56,55 @@
   }
 
   body {
-    @apply text-foreground font-body;
+    @apply text-foreground bg-background font-body text-body;
     background: linear-gradient(180deg, rgba(242,114,97,0.5) 0%, rgba(244,158,133,0.5) 100%);
     background-attachment: fixed;
   }
 
-  /* Fix: Changed from trying to apply font-display to using font-family directly */
-  h1, h2, h3, h4, h5, h6, button, .font-display {
-    font-family: 'Cooper Lt BT', serif;
+  /* Typography styles */
+  h1, .h1 {
+    @apply font-display text-h1;
+  }
+  
+  h2, .h2 {
+    @apply font-display text-h2;
+  }
+  
+  h3, .h3 {
+    @apply font-display text-h3;
+  }
+  
+  p {
+    @apply font-body text-body;
+  }
+  
+  label {
+    @apply font-author text-label;
+  }
+
+  input, textarea, select {
+    @apply font-author text-body;
+  }
+  
+  input::placeholder, textarea::placeholder {
+    @apply font-author text-placeholder text-muted-foreground/60;
+  }
+  
+  button, .button {
+    @apply font-display;
+  }
+  
+  .text-secondary {
+    @apply font-author text-secondary-text text-secondary-text;
+  }
+  
+  /* Button typography */
+  button.btn-primary {
+    @apply font-display font-bold text-button-primary uppercase;
+  }
+  
+  button.btn-secondary {
+    @apply font-display text-button-secondary;
   }
 }
 
@@ -156,7 +180,7 @@
   }
 
   .joyful-button {
-    @apply joyful-gradient text-white rounded-md px-6 py-2.5 font-medium transform transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.98];
+    @apply joyful-gradient text-white rounded-md px-6 py-2.5 font-display font-bold uppercase text-button-primary transform transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.98];
   }
 }
 
