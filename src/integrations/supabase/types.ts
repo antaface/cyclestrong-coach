@@ -173,6 +173,36 @@ export type Database = {
         }
         Relationships: []
       }
+      workout_templates: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          phase: string
+          session_json: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          phase: string
+          session_json: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          phase?: string
+          session_json?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       workouts: {
         Row: {
           completed: boolean
