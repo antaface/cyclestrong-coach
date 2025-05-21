@@ -53,6 +53,22 @@ const WorkoutPage = () => {
     });
   };
 
+  // Helper function to get phase-specific colors
+  const getPhaseColors = (phase: string) => {
+    switch(phase?.toLowerCase()) {
+      case 'menstrual':
+        return 'bg-joyful-clay/10 border-joyful-clay/20';
+      case 'follicular':
+        return 'bg-joyful-coral/10 border-joyful-coral/20';
+      case 'ovulation':
+        return 'bg-joyful-orange/10 border-joyful-orange/20';
+      case 'luteal':
+        return 'bg-joyful-peach/10 border-joyful-peach/20';
+      default:
+        return 'bg-white/50 border-border/30';
+    }
+  };
+
   if (phaseLoading || workoutLoading) {
     return <WorkoutPageLoading />;
   }
@@ -64,10 +80,10 @@ const WorkoutPage = () => {
   return (
     <>
       <PageContainer title={activeWorkout ? "Today's Workout" : "Workout Templates"}>
-        <div className="space-y-8">
+        <div className="space-y-8 animate-fade-in">
           {!activeWorkout ? (
             <>
-              <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 mb-6">
+              <div className={`rounded-lg p-4 mb-6 border ${getPhaseColors(currentPhase)} backdrop-blur-sm transition-all duration-300`}>
                 <h2 className="text-lg font-display mb-1">
                   {currentPhase} Phase Workout Plans
                 </h2>
@@ -83,8 +99,8 @@ const WorkoutPage = () => {
           ) : (
             <>
               {/* Display active workout */}
-              <div className="flex justify-between items-start">
-                <div className="flex-grow">
+              <div className="flex justify-between items-start flex-col md:flex-row gap-4">
+                <div className="flex-grow w-full md:w-auto">
                   <WorkoutSummaryCard workout={workout!} />
                 </div>
                 <WorkoutTimerDisplay 
