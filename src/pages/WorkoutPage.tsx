@@ -98,18 +98,22 @@ const WorkoutPage = () => {
             </>
           ) : (
             <>
-              {/* Display active workout */}
-              <div className="flex justify-between items-start flex-col md:flex-row gap-4">
-                <div className="flex-grow w-full md:w-auto">
-                  <WorkoutSummaryCard workout={workout!} />
+              {/* Display active workout - no card div */}
+              <div className="flex flex-col gap-4">
+                <WorkoutSummaryCard workout={workout!} />
+                
+                <div className="flex items-center justify-between">
+                  <div className="text-2xl font-mono">{formatTime(timer)}</div>
+                  <div className="flex space-x-2">
+                    <WorkoutTimerDisplay 
+                      timer={timer} 
+                      isTimerActive={isTimerActive} 
+                      formatTime={formatTime}
+                      toggleTimer={toggleTimer}
+                      resetTimer={resetTimer}
+                    />
+                  </div>
                 </div>
-                <WorkoutTimerDisplay 
-                  timer={timer} 
-                  isTimerActive={isTimerActive} 
-                  formatTime={formatTime}
-                  toggleTimer={toggleTimer}
-                  resetTimer={resetTimer}
-                />
               </div>
               
               {/* Exercise list */}

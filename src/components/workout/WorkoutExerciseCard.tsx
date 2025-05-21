@@ -1,13 +1,12 @@
 
 import { cn } from "@/lib/utils";
 import { WorkoutExercise } from "@/types";
-import { Video } from "lucide-react";
+import { Video, Plus, Check } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import ExerciseFormReview from "./ExerciseFormReview";
 
 interface WorkoutExerciseCardProps {
@@ -41,8 +40,8 @@ const WorkoutExerciseCard = ({
 
   return (
     <Card key={exercise.id}>
-      <CardContent className="p-4">
-        <div className="flex justify-between items-center mb-3">
+      <CardContent className="p-3">
+        <div className="flex justify-between items-center mb-2">
           <h3 className="font-display text-lg">{exercise.name}</h3>
           <Dialog>
             <DialogTrigger asChild>
@@ -109,17 +108,30 @@ const WorkoutExerciseCard = ({
               <div className="col-span-2 text-center">{set.rir}</div>
               
               <div className="col-span-3 flex justify-end items-center">
-                <Checkbox
-                  checked={set.completed}
-                  onCheckedChange={() => onSetComplete(exerciseIndex, setIndex)}
+                <button
+                  onClick={() => onSetComplete(exerciseIndex, setIndex)}
                   className={cn(
-                    "h-6 w-6 border-2",
-                    set.completed ? "border-primary" : "border-border"
+                    "h-6 w-6 rounded-sm flex items-center justify-center transition-all duration-200",
+                    "border-2 transform active:scale-95",
+                    set.completed 
+                      ? "bg-primary border-primary text-white" 
+                      : "border-gray-300 bg-white"
                   )}
-                />
+                >
+                  {set.completed && <Check className="h-4 w-4" />}
+                </button>
               </div>
             </div>
           ))}
+          
+          <div className="mt-3 flex justify-center">
+            <Button 
+              variant="ghost"
+              className="px-0 h-auto text-primary font-medium hover:bg-transparent hover:underline"
+            >
+              <Plus className="h-4 w-4 mr-1" /> Add Set
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
