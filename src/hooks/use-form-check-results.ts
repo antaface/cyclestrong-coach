@@ -71,7 +71,15 @@ export function useFormCheckResults() {
       }
     };
     
-    return mockResults[liftType] || mockResults.default;
+    // Ensure we return a valid result even if the lift type is not found
+    const result = mockResults[liftType] || mockResults.default;
+    
+    // Ensure notes is always an array
+    if (!Array.isArray(result.notes)) {
+      result.notes = [];
+    }
+    
+    return result;
   };
   
   return {

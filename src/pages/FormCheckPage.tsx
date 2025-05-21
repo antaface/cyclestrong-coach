@@ -8,6 +8,7 @@ import FormResultsSection from "@/components/form-check/FormResultsSection";
 import { useFormUpload } from "@/hooks/use-form-upload";
 import { useFormCheckResults } from "@/hooks/use-form-check-results";
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from "@/hooks/use-toast";
 
 const FormCheckPage = () => {
   const navigate = useNavigate();
@@ -33,9 +34,17 @@ const FormCheckPage = () => {
   };
 
   const handleCheckForm = async () => {
-    if (!videoFile || !liftType) return;
+    if (!videoFile || !liftType) {
+      toast({
+        title: "Missing information",
+        description: "Please select a video file and exercise type",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsAnalyzing(true);
+    console.log("Starting form analysis for:", liftType);
     
     // Generate a mock workout ID if one wasn't provided
     const mockWorkoutId = workoutId || uuidv4();
@@ -43,6 +52,7 @@ const FormCheckPage = () => {
     try {
       // Get mock results based on lift type
       const mockResults = getMockResultsForLiftType(liftType);
+      console.log("Mock results generated:", mockResults);
       
       // Create mock issues for database storage
       const mockIssues = mockResults.notes.map((note, index) => ({
@@ -66,17 +76,32 @@ const FormCheckPage = () => {
           ...mockResults,
           videoUrl: uploadedVideoUrl
         });
+        console.log("Setting result with video URL:", { ...mockResults, videoUrl: uploadedVideoUrl });
       } else {
         setResult(mockResults);
+        console.log("Setting result without video URL:", mockResults);
       }
+      
+      toast({
+        title: "Analysis complete",
+        description: "Form analysis has been completed successfully",
+      });
     } catch (error) {
       console.error("Error during form check:", error);
+      toast({
+        title: "Analysis failed",
+        description: "There was an error analyzing your form",
+        variant: "destructive",
+      });
+      setResult(null);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   const isProcessing = isAnalyzing || isUploading;
+
+  console.log("Current result state:", result);
 
   return (
     <>

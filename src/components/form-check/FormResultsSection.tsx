@@ -64,16 +64,22 @@ const FormResultsSection = ({ result }: { result: FormCheckResultProps | null })
           <div className="space-y-4">
             <h3 className="font-medium text-foreground">Form Notes</h3>
             <div className="space-y-3">
-              {result.notes && result.notes.map((note, index) => (
-                <Card key={index} className="bg-white/80 shadow-sm p-3 border-none">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-primary/10 text-primary rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <AlertTriangle className="w-4 h-4" />
+              {Array.isArray(result.notes) && result.notes.length > 0 ? (
+                result.notes.map((note, index) => (
+                  <Card key={index} className="bg-white/80 shadow-sm p-3 border-none">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-primary/10 text-primary rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <AlertTriangle className="w-4 h-4" />
+                      </div>
+                      <p className="text-sm leading-tight">{note}</p>
                     </div>
-                    <p className="text-sm leading-tight">{note}</p>
-                  </div>
+                  </Card>
+                ))
+              ) : (
+                <Card className="bg-white/80 shadow-sm p-3 border-none">
+                  <p className="text-sm text-muted-foreground">No form notes available.</p>
                 </Card>
-              ))}
+              )}
             </div>
           </div>
         </div>
