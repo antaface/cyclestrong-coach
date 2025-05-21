@@ -30,15 +30,16 @@ const FormUploadSection = ({
   onCheckForm,
 }: FormUploadSectionProps) => {
   return (
-    <Card className="p-5">
+    <Card className="p-4 sm:p-5 border border-border/40">
       <div className="space-y-4">
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="video">Upload Video</Label>
+          <Label htmlFor="video" className="font-medium">Upload Form Video</Label>
           <Input
             id="video"
             type="file"
             accept="video/*"
             onChange={onFileChange}
+            className="cursor-pointer"
           />
         </div>
         
@@ -50,13 +51,13 @@ const FormUploadSection = ({
         )}
         
         <div className="space-y-2">
-          <Label htmlFor="lift-type">Lift Type</Label>
+          <Label htmlFor="lift-type" className="font-medium">Exercise Type</Label>
           <Select 
             value={liftType} 
             onValueChange={onLiftTypeChange}
           >
-            <SelectTrigger id="lift-type" className="w-full">
-              <SelectValue placeholder="Select lift type" />
+            <SelectTrigger id="lift-type" className="w-full bg-white/80">
+              <SelectValue placeholder="Select exercise" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Squat">Squat</SelectItem>
@@ -70,11 +71,11 @@ const FormUploadSection = ({
         </div>
         
         <Button 
-          className="w-full"
+          className="w-full mt-2"
           disabled={!videoFile || !liftType || isProcessing}
           onClick={onCheckForm}
         >
-          {isProcessing ? "Processing..." : "Check Form"}
+          {isProcessing ? "Analyzing Form..." : "Analyze Form"}
         </Button>
       </div>
     </Card>

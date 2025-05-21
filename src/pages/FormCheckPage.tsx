@@ -17,7 +17,7 @@ const FormCheckPage = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [liftType, setLiftType] = useState(exerciseName || "");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const { isUploading, uploadAndSaveForm } = useFormUpload();
+  const { isUploading, videoUrl, uploadAndSaveForm } = useFormUpload();
   const { result, setResult, getMockResultsForLiftType } = useFormCheckResults();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +52,7 @@ const FormCheckPage = () => {
       }));
       
       // Upload the video and save form review data
-      await uploadAndSaveForm(
+      const uploadedVideoUrl = await uploadAndSaveForm(
         mockWorkoutId, 
         liftType, 
         videoFile, 
@@ -60,8 +60,15 @@ const FormCheckPage = () => {
         mockIssues
       );
       
-      // Set results for display
-      setResult(mockResults);
+      // Set results for display with video URL
+      if (uploadedVideoUrl) {
+        setResult({
+          ...mockResults,
+          videoUrl: uploadedVideoUrl
+        });
+      } else {
+        setResult(mockResults);
+      }
     } catch (error) {
       console.error("Error during form check:", error);
     } finally {

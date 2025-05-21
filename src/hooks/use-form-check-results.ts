@@ -4,6 +4,7 @@ import { useState } from 'react';
 export interface FormCheckResult {
   score: number;
   notes: string[];
+  videoUrl?: string;
 }
 
 export function useFormCheckResults() {
@@ -41,6 +42,22 @@ export function useFormCheckResults() {
           "Hips rising slightly before shoulders on heavy reps",
           "Good hamstring engagement", 
           "Try to keep the bar closer to your legs throughout the movement"
+        ]
+      },
+      "Overhead Press": {
+        score: 7.2,
+        notes: [
+          "Slight overextension of the lower back",
+          "Elbows need to track forward more",
+          "Good bar path over midline"
+        ]
+      },
+      "Pull-up": {
+        score: 6.8,
+        notes: [
+          "Not reaching full extension at the bottom",
+          "Good scapular engagement at the top",
+          "Work on reducing body swing during reps"
         ]
       },
       // Default fallback for any other exercise
