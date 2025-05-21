@@ -1,66 +1,55 @@
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from "@/components/theme-provider"
+import { useTheme } from 'next-themes'
+import { Toaster } from "@/components/ui/toaster"
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from './pages/LandingPage';
+import AuthPage from './pages/AuthPage';
+import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+import ProgramPage from './pages/ProgramPage';
+import WorkoutPage from './pages/WorkoutPage';
+import CalendarPage from './pages/CalendarPage';
+import OnboardingPage from './pages/OnboardingPage';
+import NotFound from './pages/NotFoundPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
+import FormCheckPage from './pages/FormCheckPage';
 
-import LandingPage from "./pages/LandingPage";
-import OnboardingPage from "./pages/OnboardingPage";
-import HomePage from "./pages/HomePage";
-import CalendarPage from "./pages/CalendarPage";
-import WorkoutPage from "./pages/WorkoutPage";
-import ProfilePage from "./pages/ProfilePage";
-import ProgramPage from "./pages/ProgramPage";
-import NotFound from "./pages/NotFound";
-import AuthPage from "./pages/AuthPage";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+function App() {
+  const [mounted, setMounted] = useState(false)
+  const { themeMode } = useTheme()
 
-const queryClient = new QueryClient();
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/welcome" element={<LandingPage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/calendar" element={
-              <ProtectedRoute>
-                <CalendarPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/workout" element={
-              <ProtectedRoute>
-                <WorkoutPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/program" element={
-              <ProtectedRoute>
-                <ProgramPage />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <AuthProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/program" element={<ProgramPage />} />
+            <Route path="/workout" element={<WorkoutPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/form-check" element={<FormCheckPage />} />
+          </Route>
+          
+          <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </ThemeProvider>
+    </AuthProvider>
+  );
+}
 
 export default App;

@@ -1,13 +1,11 @@
-
 import { cn } from "@/lib/utils";
 import { WorkoutExercise } from "@/types";
 import { Video, Plus, Check } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import ExerciseFormReview from "./ExerciseFormReview";
+import { useNavigate } from "react-router-dom";
 
 interface WorkoutExerciseCardProps {
   exercise: WorkoutExercise;
@@ -24,6 +22,7 @@ const WorkoutExerciseCard = ({
   onSetComplete,
   onAddSet
 }: WorkoutExerciseCardProps) => {
+  const navigate = useNavigate();
   const [setWeights, setSetWeights] = useState<{[key: number]: string}>(
     exercise.sets.reduce((acc, set, idx) => ({...acc, [idx]: set.weight?.toString() || ""}), {})
   );
@@ -46,24 +45,29 @@ const WorkoutExerciseCard = ({
     }
   };
 
+  const handleOpenFormCheck = () => {
+    navigate('/form-check', { 
+      state: { 
+        exerciseName: exercise.name,
+        workoutId 
+      }
+    });
+  };
+
   return (
     <Card key={exercise.id}>
       <CardContent className="p-3">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-display text-lg">{exercise.name}</h3>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="h-8 border-primary text-primary hover:bg-primary/10"
-              >
-                <Video className="w-4 h-4 mr-1" />
-                Form
-              </Button>
-            </DialogTrigger>
-            <ExerciseFormReview exercise={exercise} workoutId={workoutId} />
-          </Dialog>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="h-8 border-primary text-primary hover:bg-primary/10"
+            onClick={handleOpenFormCheck}
+          >
+            <Video className="w-4 h-4 mr-1" />
+            Form
+          </Button>
         </div>
         
         {exercise.notes && (
