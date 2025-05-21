@@ -38,13 +38,14 @@ export function useFormUpload() {
       if (videoUrl) {
         setVideoUrl(videoUrl);
         
-        // Save form review record
-        await saveFormReview(workoutId, exerciseName, score, issues, videoUrl);
-
-        toast({
-          title: "Form analysis complete",
-          description: "Your form has been analyzed. Check the results!",
-        });
+        try {
+          // Try to save form review record, but don't block on failure
+          await saveFormReview(workoutId, exerciseName, score, issues, videoUrl);
+        } catch (dbError) {
+          // Log the database error but continue with form analysis
+          console.error('Database save error:', dbError);
+          // We'll still return the video URL even if database save fails
+        }
 
         return videoUrl;
       }

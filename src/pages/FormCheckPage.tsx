@@ -70,7 +70,8 @@ const FormCheckPage = () => {
         mockIssues
       );
       
-      // Set results for display with video URL
+      // Always display results, even if video upload fails
+      // If we have a video URL, include it in the results
       if (uploadedVideoUrl) {
         setResult({
           ...mockResults,
@@ -78,6 +79,7 @@ const FormCheckPage = () => {
         });
         console.log("Setting result with video URL:", { ...mockResults, videoUrl: uploadedVideoUrl });
       } else {
+        // Still show results without video if upload failed
         setResult(mockResults);
         console.log("Setting result without video URL:", mockResults);
       }
@@ -88,12 +90,24 @@ const FormCheckPage = () => {
       });
     } catch (error) {
       console.error("Error during form check:", error);
-      toast({
-        title: "Analysis failed",
-        description: "There was an error analyzing your form",
-        variant: "destructive",
-      });
-      setResult(null);
+      
+      // Even on error, try to display at least the mock results
+      try {
+        const fallbackResults = getMockResultsForLiftType(liftType);
+        setResult(fallbackResults);
+        
+        toast({
+          title: "Partial analysis available",
+          description: "We encountered an issue but have provided form feedback",
+        });
+      } catch (fallbackError) {
+        toast({
+          title: "Analysis failed",
+          description: "There was an error analyzing your form",
+          variant: "destructive",
+        });
+        setResult(null);
+      }
     } finally {
       setIsAnalyzing(false);
     }
