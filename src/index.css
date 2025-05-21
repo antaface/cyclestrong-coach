@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,7 +94,7 @@
   }
   
   .text-secondary {
-    @apply font-author text-secondary-text text-secondary-text;
+    @apply font-author text-secondary-text;
   }
   
   /* Button typography */
@@ -135,20 +134,25 @@
     @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer;
   }
 
+  /* Updated cycle phase colors */
+  .cycle-day-menstrual {
+    background-color: #FDDADA; /* light rose */
+    @apply text-gray-800;
+  }
+  
   .cycle-day-follicular {
-    @apply bg-primary text-white;
+    background-color: #FCE6D7; /* peach */
+    @apply text-gray-800;
   }
   
   .cycle-day-ovulation {
-    @apply bg-secondary text-white;
+    background-color: #E2F0CB; /* pale green */
+    @apply text-gray-800;
   }
   
   .cycle-day-luteal {
-    @apply bg-accent text-accent-foreground;
-  }
-  
-  .cycle-day-menstrual {
-    @apply bg-secondary text-white;
+    background-color: #FFEFD6; /* light yellow */
+    @apply text-gray-800;
   }
   
   .cycle-day-empty {
