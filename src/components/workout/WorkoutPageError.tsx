@@ -1,19 +1,28 @@
 
-import PageContainer from "@/components/layout/PageContainer";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import PageContainer from "../layout/PageContainer";
+import Navbar from "../layout/Navbar";
 
 const WorkoutPageError = () => {
+  const handleRetry = () => {
+    window.location.reload();
+  };
+  
   return (
-    <PageContainer title="Error">
-      <div className="text-center py-12">
-        <h2 className="text-xl font-display mb-3">Could not load workout</h2>
-        <p className="text-muted-foreground mb-6">Please try again later</p>
-        <Button variant="outline" className="flex items-center mx-auto">
-          <RefreshCw className="w-4 h-4 mr-2" /> Try Again
-        </Button>
-      </div>
-    </PageContainer>
+    <>
+      <PageContainer title="Error">
+        <div className="flex flex-col items-center justify-center h-[50vh] text-center">
+          <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
+          <h2 className="font-display text-xl mb-2">Something went wrong</h2>
+          <p className="text-muted-foreground mb-6">
+            We encountered an error loading the workout data.
+          </p>
+          <Button onClick={handleRetry}>Retry</Button>
+        </div>
+      </PageContainer>
+      <Navbar />
+    </>
   );
 };
 

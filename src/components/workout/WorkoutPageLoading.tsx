@@ -1,13 +1,19 @@
 
-import PageContainer from "@/components/layout/PageContainer";
+import { Loader2 } from "lucide-react";
+import PageContainer from "../layout/PageContainer";
+import Navbar from "../layout/Navbar";
 
 const WorkoutPageLoading = () => {
   return (
-    <PageContainer title="Loading workout...">
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    </PageContainer>
+    <>
+      <PageContainer title="Workouts">
+        <div className="flex flex-col items-center justify-center h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Loading workouts...</p>
+        </div>
+      </PageContainer>
+      <Navbar />
+    </>
   );
 };
 

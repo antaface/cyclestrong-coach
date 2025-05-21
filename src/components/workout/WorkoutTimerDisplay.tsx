@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
-import { Play, Pause, RefreshCw } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Pause, Play, RotateCcw } from "lucide-react";
 
 interface WorkoutTimerDisplayProps {
   timer: number;
@@ -18,29 +19,32 @@ const WorkoutTimerDisplay = ({
   resetTimer
 }: WorkoutTimerDisplayProps) => {
   return (
-    <div className="flex flex-col items-center">
-      <div className="text-center bg-accent/10 px-4 py-3 rounded-lg border border-border/30">
-        <span className="font-display text-lg font-medium">{formatTime(timer)}</span>
-        <div className="flex gap-2 mt-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-7 w-7 p-0 rounded-full bg-accent/10"
+    <Card className="ml-4 min-w-[120px]">
+      <CardContent className="p-4 text-center">
+        <div className="text-2xl font-mono mb-2">{formatTime(timer)}</div>
+        <div className="flex space-x-1">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
             onClick={toggleTimer}
           >
-            {isTimerActive ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            {isTimerActive ? 
+              <Pause className="h-4 w-4" /> : 
+              <Play className="h-4 w-4" />
+            }
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-7 w-7 p-0 rounded-full bg-accent/10"
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
             onClick={resetTimer}
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
