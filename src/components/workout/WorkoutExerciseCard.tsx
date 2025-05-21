@@ -14,13 +14,15 @@ interface WorkoutExerciseCardProps {
   exerciseIndex: number;
   workoutId: string;
   onSetComplete: (exerciseIndex: number, setIndex: number) => void;
+  onAddSet?: (exerciseIndex: number) => void;
 }
 
 const WorkoutExerciseCard = ({
   exercise,
   exerciseIndex,
   workoutId,
-  onSetComplete
+  onSetComplete,
+  onAddSet
 }: WorkoutExerciseCardProps) => {
   const [setWeights, setSetWeights] = useState<{[key: number]: string}>(
     exercise.sets.reduce((acc, set, idx) => ({...acc, [idx]: set.weight?.toString() || ""}), {})
@@ -39,8 +41,9 @@ const WorkoutExerciseCard = ({
   };
 
   const handleAddSet = () => {
-    // This function would need to be passed down from useWorkout
-    console.log("Add set clicked for exercise:", exercise.id);
+    if (onAddSet) {
+      onAddSet(exerciseIndex);
+    }
   };
 
   return (
@@ -120,7 +123,7 @@ const WorkoutExerciseCard = ({
                     "border-2 transform active:scale-90",
                     set.completed 
                       ? "bg-joyful-coral border-joyful-coral text-white" 
-                      : "border-gray-300 bg-white hover:border-joyful-coral/50"
+                      : "border-white bg-transparent hover:border-joyful-coral/50 border-gray-300"
                   )}
                   aria-label={set.completed ? "Mark set incomplete" : "Mark set complete"}
                 >
@@ -133,8 +136,8 @@ const WorkoutExerciseCard = ({
           <div className="mt-3 flex justify-center">
             <Button 
               variant="ghost"
-              className="px-0 h-auto text-joyful-coral font-medium hover:bg-transparent hover:underline"
               onClick={handleAddSet}
+              className="px-0 h-auto text-joyful-coral font-medium hover:bg-transparent hover:underline"
             >
               <Plus className="h-4 w-4 mr-1" /> Add Set
             </Button>

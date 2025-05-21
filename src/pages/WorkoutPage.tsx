@@ -100,10 +100,24 @@ const WorkoutPage = () => {
           ) : (
             <>
               {/* Display workout title without card div */}
-              <WorkoutSummaryCard workout={workout!} />
+              <div className="mb-6">
+                <h2 className="text-xl font-display">{workout?.session_json ? 
+                  (typeof workout.session_json === 'string' ? 
+                    JSON.parse(workout.session_json).name : 
+                    workout.session_json.name) : 
+                  "Workout Session"}
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {workout?.session_json ? 
+                    (typeof workout.session_json === 'string' ? 
+                      JSON.parse(workout.session_json).description : 
+                      workout.session_json.description) : 
+                    ""}
+                </p>
+              </div>
               
               {/* Timer and buttons in one row without card div */}
-              <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center justify-between mt-4 mb-6">
                 <div className="text-2xl font-mono">{formatTime(timer)}</div>
                 <WorkoutTimerDisplay 
                   timer={timer} 

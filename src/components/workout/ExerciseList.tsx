@@ -22,6 +22,7 @@ const ExerciseList = ({ exercises, workoutId, onSetComplete, onAddSet }: Exercis
             exerciseIndex={exerciseIndex}
             workoutId={workoutId}
             onSetComplete={onSetComplete}
+            onAddSet={onAddSet}
           />
         ))}
       </div>
