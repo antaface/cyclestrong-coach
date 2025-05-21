@@ -13,7 +13,7 @@ interface ExerciseListProps {
 const ExerciseList = ({ exercises, workoutId, onSetComplete }: ExerciseListProps) => {
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {exercises && exercises.map((exercise, exerciseIndex) => (
           <WorkoutExerciseCard
             key={exercise.id}
@@ -26,7 +26,7 @@ const ExerciseList = ({ exercises, workoutId, onSetComplete }: ExerciseListProps
       </div>
       
       {/* Add exercise button */}
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-4">
         <Button 
           variant="outline" 
           className="border-dashed border-accent text-muted-foreground hover:bg-accent/5"

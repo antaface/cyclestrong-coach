@@ -43,20 +43,20 @@ export function useWorkout(workoutId?: string) {
         workout_id: "mock-workout",
         program_id: "mock-program",
         date: new Date(),
-        phase: CyclePhase.FOLLICULAR,
+        phase: CyclePhase.LUTEAL,
         session_json: JSON.stringify({
-          name: "Lower Body Strength - Follicular Phase",
-          description: "Focus on progressive overload and challenging yourself with heavier weights",
+          name: "Lower Body Strength - Luteal Phase",
+          description: "Focus on progressive overload with moderate weights",
         }),
         completed: false,
         exercises: [
           {
             id: "ex1",
-            name: "Back Squat",
+            name: "Goblet Squat",
             sets: [
-              { weight: 80, reps: 5, rir: 2, completed: false },
-              { weight: 85, reps: 5, rir: 2, completed: false },
-              { weight: 90, reps: 5, rir: 2, completed: false },
+              { weight: 20, reps: 10, rir: 2, completed: false },
+              { weight: 22.5, reps: 10, rir: 2, completed: false },
+              { weight: 25, reps: 8, rir: 2, completed: false },
             ],
             notes: "Focus on depth and keeping chest up"
           },
@@ -64,9 +64,9 @@ export function useWorkout(workoutId?: string) {
             id: "ex2",
             name: "Romanian Deadlift",
             sets: [
-              { weight: 70, reps: 8, rir: 2, completed: false },
-              { weight: 70, reps: 8, rir: 2, completed: false },
-              { weight: 70, reps: 8, rir: 2, completed: false },
+              { weight: 40, reps: 12, rir: 2, completed: false },
+              { weight: 40, reps: 12, rir: 2, completed: false },
+              { weight: 40, reps: 10, rir: 2, completed: false },
             ],
             notes: "Maintain neutral spine, feel stretch in hamstrings"
           },
@@ -74,9 +74,9 @@ export function useWorkout(workoutId?: string) {
             id: "ex3",
             name: "Hip Thrust",
             sets: [
-              { weight: 100, reps: 10, rir: 2, completed: false },
-              { weight: 100, reps: 10, rir: 2, completed: false },
-              { weight: 100, reps: 10, rir: 2, completed: false },
+              { weight: 50, reps: 10, rir: 2, completed: false },
+              { weight: 50, reps: 10, rir: 2, completed: false },
+              { weight: 50, reps: 10, rir: 2, completed: false },
             ]
           }
         ]

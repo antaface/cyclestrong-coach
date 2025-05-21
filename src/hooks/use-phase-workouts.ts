@@ -62,6 +62,28 @@ const mockTemplates: WorkoutTemplate[] = [
   },
   {
     id: '6',
+    phase: 'luteal',
+    title: 'Light Upper Body Push',
+    description: 'Controlled movements focusing on form and stability.',
+    session_json: [
+      { exercise: "Push-ups", sets: 3, reps: 8, rir: 2 },
+      { exercise: "Shoulder Press", sets: 3, reps: 10, rir: 2 },
+      { exercise: "Lat Pulldown", sets: 3, reps: 12, rir: 2 }
+    ]
+  },
+  {
+    id: '7',
+    phase: 'luteal',
+    title: 'Gentle Lower Body Focus',
+    description: 'Bodyweight movements with minimal equipment needs.',
+    session_json: [
+      { exercise: "Bulgarian Split Squat", sets: 3, reps: 10, rir: 2 },
+      { exercise: "Glute Bridge", sets: 3, reps: 12, rir: 2 },
+      { exercise: "Calf Raises", sets: 3, reps: 15, rir: 2 }
+    ]
+  },
+  {
+    id: '8',
     phase: 'ovulation',
     title: 'Maximum Strength Day',
     description: 'Peak performance day - go for PRs and heavy lifts.',
@@ -74,7 +96,7 @@ const mockTemplates: WorkoutTemplate[] = [
 ];
 
 export function usePhaseWorkouts() {
-  const [currentPhase, setCurrentPhase] = useState<CyclePhase>(CyclePhase.FOLLICULAR);
+  const [currentPhase, setCurrentPhase] = useState<CyclePhase>(CyclePhase.LUTEAL);
   const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -90,7 +112,7 @@ export function usePhaseWorkouts() {
         // For testing: rotate through phases when reloading
         const randomPhase = Math.floor(Math.random() * 4);
         const phases = [CyclePhase.FOLLICULAR, CyclePhase.OVULATION, CyclePhase.LUTEAL, CyclePhase.MENSTRUAL];
-        setCurrentPhase(phases[randomPhase]);
+        setCurrentPhase(CyclePhase.LUTEAL); // Set to always be LUTEAL for now
         
         // Small delay to simulate API call
         setTimeout(() => {
@@ -113,7 +135,7 @@ export function usePhaseWorkouts() {
       // const { data, error } = await supabase.from('workout_templates').select('*').eq('phase', currentPhase).limit(3);
       
       const phaseTemplates = mockTemplates.filter(t => t.phase === currentPhase.toLowerCase());
-      setTemplates(phaseTemplates.slice(0, 3)); // Limit to 3 templates
+      setTemplates(phaseTemplates); // Show all templates for the phase
     }
   }, [currentPhase]);
 
