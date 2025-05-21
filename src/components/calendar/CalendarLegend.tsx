@@ -1,7 +1,7 @@
 
 import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardDescription } from "@/components/ui/card";
 
 interface CalendarLegendProps {
   nextPeriodDate: string | null;
@@ -38,17 +38,13 @@ export const CalendarLegend = ({ nextPeriodDate, daysUntilNextPeriod }: Calendar
       </div>
       
       {nextPeriodDate && daysUntilNextPeriod !== null && (
-        <Card className="mt-6">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Upcoming Menstrual Phase</CardTitle>
-            <CardDescription>Starting in {daysUntilNextPeriod} days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-cs-neutral-600">
-              Consider planning a deload week to align with your upcoming menstrual phase. This is a good time to focus on recovery and mobility work.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-1">Upcoming Menstrual Phase</h3>
+          <CardDescription className="mb-2">Starting in {daysUntilNextPeriod} days</CardDescription>
+          <p className="text-sm text-cs-neutral-600">
+            Consider planning a deload week to align with your upcoming menstrual phase. This is a good time to focus on recovery and mobility work.
+          </p>
+        </div>
       )}
     </div>
   );

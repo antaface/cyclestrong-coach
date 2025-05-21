@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { addMonths } from "date-fns";
 import { Info, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
@@ -12,6 +13,7 @@ import { CalendarDayDialog } from "@/components/calendar/CalendarDayDialog";
 import { CyclePhase } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { Card } from "@/components/ui/card";
 
 interface CycleEvent {
   date: string;
@@ -27,9 +29,17 @@ const CalendarPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [nextPeriodDate, setNextPeriodDate] = useState<string | null>(null);
   const [daysUntilNextPeriod, setDaysUntilNextPeriod] = useState<number | null>(null);
+  const [direction, setDirection] = useState(0);
   
-  const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-  const prevMonth = () => setCurrentDate(addMonths(currentDate, -1));
+  const nextMonth = () => {
+    setDirection(1);
+    setCurrentDate(addMonths(currentDate, 1));
+  };
+  
+  const prevMonth = () => {
+    setDirection(-1);
+    setCurrentDate(addMonths(currentDate, -1));
+  };
   
   useEffect(() => {
     const fetchCycleEvents = async () => {
@@ -83,6 +93,25 @@ const CalendarPage = () => {
     setIsDialogOpen(true);
   };
   
+  const calendarVariants = {
+    enter: (direction: number) => {
+      return {
+        x: direction > 0 ? 300 : -300,
+        opacity: 0
+      };
+    },
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => {
+      return {
+        x: direction < 0 ? 300 : -300,
+        opacity: 0
+      };
+    }
+  };
+  
   return (
     <>
       <PageContainer title="Cycle Calendar">
@@ -104,11 +133,25 @@ const CalendarPage = () => {
               onPrevMonth={prevMonth} 
             />
             
-            <CalendarGrid 
-              currentDate={currentDate} 
-              cycleEvents={cycleEvents} 
-              onDayClick={handleDayClick} 
-            />
+            <Card className="p-4 overflow-hidden">
+              <AnimatePresence initial={false} custom={direction} mode="wait">
+                <motion.div
+                  key={currentDate.getMonth()}
+                  custom={direction}
+                  variants={calendarVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ type: "tween", duration: 0.3 }}
+                >
+                  <CalendarGrid 
+                    currentDate={currentDate} 
+                    cycleEvents={cycleEvents} 
+                    onDayClick={handleDayClick} 
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </Card>
           </div>
         )}
         
