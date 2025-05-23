@@ -33,6 +33,7 @@ export function useOnboardingSubmission() {
     
     try {
       setIsSubmitting(true);
+      console.log("Completing onboarding for user:", user.id);
       
       // Combine all form data
       const lastPeriodDate = formData.lastPeriod;
@@ -74,7 +75,8 @@ export function useOnboardingSubmission() {
         toast.error("Profile saved but there was an issue generating your cycle calendar. Please try refreshing.");
       }
       
-      navigate("/home");
+      console.log("Onboarding complete, navigating to home");
+      navigate("/home", { replace: true });
       return true;
     } catch (error: any) {
       console.error("Error saving profile:", error);

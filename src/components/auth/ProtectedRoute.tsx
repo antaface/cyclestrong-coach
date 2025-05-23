@@ -4,11 +4,7 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import WorkoutPageLoading from "@/components/workout/WorkoutPageLoading";
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+const ProtectedRoute = () => {
   const { user, loading, needsOnboarding } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

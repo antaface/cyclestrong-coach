@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Check if user has completed onboarding by checking their profile
   const checkOnboardingStatus = async (userId: string) => {
     try {
+      console.log("Checking onboarding status for user:", userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('last_period, goal, training_age, cycle_length, one_rm')
@@ -37,19 +38,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // If we get a "No rows found" error, it means the profile doesn't exist,
         // which indicates the user needs onboarding
         if (error.code === 'PGRST116') {
+          console.log("No profile found, user needs onboarding");
           setNeedsOnboarding(true);
+          navigate('/onboarding');
           return;
         }
         throw error;
       }
       
       // If the user has a profile but critical fields are missing, they need onboarding
-      const needsOnboarding = !data.one_rm || !data.cycle_length || !data.goal;
-      setNeedsOnboarding(needsOnboarding);
+      const missingOnboarding = !data.one_rm || !data.cycle_length || !data.goal;
+      console.log("Profile data:", data, "Needs onboarding:", missingOnboarding);
+      setNeedsOnboarding(missingOnboarding);
       
       // If user is authenticated and doesn't need onboarding, redirect to home
-      if (!needsOnboarding) {
+      if (!missingOnboarding) {
         navigate('/home');
+      } else {
+        navigate('/onboarding');
       }
     } catch (error) {
       console.error("Error checking onboarding status:", error);
@@ -61,6 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -83,6 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session check:", session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -102,7 +110,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log("Attempting to sign up:", email);
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -114,9 +123,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
       
-      // Note: The onAuthStateChange handler will take care of navigation
-      toast.success("Signup successful! Complete your profile setup.");
+      console.log("Signup successful:", data);
+      toast.success("Signup successful! Please sign in to complete your profile setup.");
+      
+      // After successful signup, we should direct to login
+      // The onAuthStateChange handler will take care of navigation if auto-login happens
     } catch (error: any) {
+      console.error("Signup error:", error);
       toast.error(error.message || "An error occurred during signup");
       throw error;
     }
@@ -124,15 +137,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("Attempting to sign in:", email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
       
+      console.log("Signin successful:", data.user?.email);
       // Note: The onAuthStateChange handler will take care of navigation
     } catch (error: any) {
+      console.error("Signin error:", error);
       toast.error(error.message || "An error occurred during sign in");
       throw error;
     }

@@ -29,13 +29,16 @@ function App() {
     <AuthProvider>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
         <Routes>
+          {/* Redirect root to landing */}
           <Route path="/" element={<Navigate to="/landing" replace />} />
+          
+          {/* Public routes */}
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           
           {/* Protected routes */}
-          <Route element={<ProtectedRoute children={null} />}>
+          <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/program" element={<ProgramPage />} />

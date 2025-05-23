@@ -12,6 +12,7 @@ const LandingPage = () => {
   useEffect(() => {
     // If user is authenticated, redirect appropriately
     if (!loading && user) {
+      console.log("User is authenticated on landing page, needsOnboarding:", needsOnboarding);
       if (needsOnboarding) {
         navigate("/onboarding");
       } else {
