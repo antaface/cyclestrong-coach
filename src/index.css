@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,7 +56,7 @@
 
   body {
     @apply text-foreground bg-background font-body text-body;
-    background: linear-gradient(180deg, rgba(242,114,97,0.08) 0%, rgba(244,158,133,0.08) 100%);
+    background: linear-gradient(180deg, rgba(242,114,97,0.3) 0%, rgba(244,158,133,0.3) 100%);
     background-attachment: fixed;
   }
 
@@ -111,7 +110,7 @@
 @layer components {
   .app-container {
     @apply max-w-md mx-auto min-h-screen pb-16;
-    background: linear-gradient(90deg, rgba(242,114,97,0.08) 0%, rgba(244,158,133,0.08) 100%);
+    background: linear-gradient(90deg, rgba(242,114,97,0.3) 0%, rgba(244,158,133,0.3) 100%);
     background-attachment: fixed;
   }
 

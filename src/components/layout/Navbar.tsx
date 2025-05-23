@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, Dumbbell, User, Activity } from "lucide-react";
+import { Home, Calendar, Dumbbell, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Navbar = () => {
@@ -18,19 +18,14 @@ const Navbar = () => {
       icon: Calendar 
     },
     { 
-      path: "/program", 
-      label: "Program", 
-      icon: Activity 
-    },
-    { 
       path: "/workout", 
       label: "Workout", 
       icon: Dumbbell 
     },
     { 
-      path: "/profile", 
-      label: "Profile", 
-      icon: User 
+      path: "/program", 
+      label: "Program", 
+      icon: Activity 
     }
   ];
 
