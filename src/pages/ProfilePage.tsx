@@ -52,8 +52,20 @@ const ProfilePage = () => {
           
         if (error) {
           console.error('Error fetching profile:', error);
-        } else {
-          setUserProfile(data);
+        } else if (data) {
+          // Create a properly typed UserProfile object from the data
+          const typedProfile: UserProfile = {
+            id: data.id,
+            cycle_length: data.cycle_length,
+            last_period: data.last_period,
+            training_age: data.training_age,
+            goal: data.goal,
+            one_rm: data.one_rm ? (typeof data.one_rm === 'string' 
+              ? JSON.parse(data.one_rm) 
+              : data.one_rm as Record<string, number>)
+          };
+          
+          setUserProfile(typedProfile);
         }
       } catch (error) {
         console.error('Error:', error);
