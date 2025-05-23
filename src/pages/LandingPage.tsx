@@ -2,26 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { loading } = useAuth();
 
-  // Show loading while checking auth routing
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="space-y-4 w-full max-w-md">
-          <div className="h-12 w-full bg-gray-200 animate-pulse rounded" />
-          <div className="h-32 w-full bg-gray-200 animate-pulse rounded" />
-          <div className="h-12 w-2/3 mx-auto bg-gray-200 animate-pulse rounded" />
-        </div>
-      </div>
-    );
-  }
-
-  // Global routing function will handle redirects if needed
+  // Landing page is now accessible anonymously
+  // Global routing function will handle redirects if needed via routeAfterAuth
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
       <div className="text-center space-y-8 max-w-md">

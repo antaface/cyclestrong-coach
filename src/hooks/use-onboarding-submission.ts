@@ -76,8 +76,8 @@ export function useOnboardingSubmission() {
         toast.error("Profile saved but there was an issue generating your cycle calendar. Please try refreshing.");
       }
       
-      console.log("Onboarding complete, navigating to home");
-      navigate("/home", { replace: true });
+      console.log("Onboarding complete - routeAfterAuth will handle navigation");
+      // Remove manual navigation - let routeAfterAuth handle it after the profile update
       return true;
     } catch (error: any) {
       console.error("Error saving profile:", error);

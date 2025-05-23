@@ -73,7 +73,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else if (event === 'SIGNED_OUT') {
           toast.info("Signed out");
           setNeedsOnboarding(false);
-          navigate('/landing');
         }
         
         // Run global routing after any auth state change
