@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Dumbbell, Apple, Moon, Brain } from "lucide-react";
 import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
 import { Confetti } from "@/components/ui/confetti";
@@ -65,6 +66,13 @@ const weeklyVolumeData = [{
   name: "Week 4",
   volume: 10000
 }];
+const habitIcons = {
+  training: Dumbbell,
+  protein: Apple,
+  sleep: Moon,
+  mindset: Brain
+};
+
 const HomePage = () => {
   const { 
     todaysHabits, 
@@ -129,6 +137,7 @@ const HomePage = () => {
             <div className="grid grid-cols-4 gap-3">
               {Object.entries(todaysHabits).map(([habit, completed]) => {
                 const progress = getProgressPercentage(habit as HabitType);
+                const IconComponent = habitIcons[habit as HabitType];
                 
                 return (
                   <div key={habit} className="flex flex-col items-center">
@@ -145,12 +154,22 @@ const HomePage = () => {
                       </div>
                       
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <Checkbox 
-                          checked={completed}
-                          disabled={isLoading}
-                          className="w-6 h-6"
-                          onCheckedChange={() => handleHabitToggle(habit as HabitType)}
-                        />
+                        <div className="relative">
+                          <Checkbox 
+                            checked={completed}
+                            disabled={isLoading}
+                            className="w-6 h-6"
+                            onCheckedChange={() => handleHabitToggle(habit as HabitType)}
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <IconComponent 
+                              size={12} 
+                              className={`transition-colors duration-200 ${
+                                completed ? 'text-white' : 'text-primary'
+                              }`}
+                            />
+                          </div>
+                        </div>
                       </div>
                       
                       {completed && (
