@@ -150,7 +150,7 @@ const HomePage = () => {
           {/* Habit rings */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="font-display text-lg">Daily Discipline Tonnage</h3>
+              <h3 className="font-display text-lg">Habit Tracker</h3>
               <div className="flex items-center gap-2">
                 {currentStreak >= 3 && <Badge variant="accent" className="animate-pulse">
                     🔥 {currentStreak} Day Streak!
@@ -172,7 +172,7 @@ const HomePage = () => {
                         
                         {/* Centered icon */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <IconComponent size={16} className={`transition-colors duration-200 ${completed ? 'text-white' : 'text-primary'}`} />
+                          <IconComponent size={16} className={`transition-colors duration-200 ${completed ? 'text-joyful-coral' : 'text-primary'}`} />
                         </div>
                       </div>
                       

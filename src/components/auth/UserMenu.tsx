@@ -12,7 +12,7 @@ const UserMenu = () => {
     return (
       <Link to="/auth">
         <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 ring-2 ring-joyful-coral">
             <AvatarFallback>
               <User className="h-4 w-4" />
             </AvatarFallback>
@@ -28,8 +28,8 @@ const UserMenu = () => {
   return (
     <Link to="/profile">
       <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={userAvatar} />
+        <Avatar className="h-8 w-8 ring-2 ring-joyful-coral">
+          <AvatarImage src={userAvatar} className="object-cover" />
           <AvatarFallback>
             {user.user_metadata?.name?.[0]?.toUpperCase() || 
              user.email?.[0]?.toUpperCase() || 
