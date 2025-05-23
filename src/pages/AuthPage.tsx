@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,7 +37,8 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("login");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.tab || "login");
   
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -217,7 +218,7 @@ const AuthPage = () => {
           </Tabs>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <Link to="/welcome" className="hover:text-primary hover:underline">
+            <Link to="/landing" className="hover:text-primary hover:underline">
               Return to welcome page
             </Link>
           </div>
