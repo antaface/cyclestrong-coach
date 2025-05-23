@@ -1,8 +1,13 @@
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
+import { Confetti } from "@/components/ui/confetti";
+import { useHabits } from "@/hooks/use-habits";
+import { useState } from "react";
 
 // Mock data for charts
 const oneRmData = [{
@@ -60,13 +65,29 @@ const weeklyVolumeData = [{
   volume: 10000
 }];
 const HomePage = () => {
-  // Mock progress state for habit rings
-  const habits = {
-    training: 80,
-    protein: 90,
-    sleep: 60,
-    mindset: 75
+  const { 
+    todaysHabits, 
+    isLoading, 
+    toggleHabit, 
+    getCompletedCount, 
+    getProgressPercentage,
+    currentStreak 
+  } = useHabits();
+  
+  const [showConfetti, setShowConfetti] = useState(false);
+  const completedCount = getCompletedCount();
+
+  // Show confetti when all habits are completed
+  const handleHabitToggle = async (habitType: keyof typeof todaysHabits) => {
+    await toggleHabit(habitType);
+    
+    // Check if this completion makes it 4/4
+    const newCompletedCount = Object.values({...todaysHabits, [habitType]: !todaysHabits[habitType]}).filter(Boolean).length;
+    if (newCompletedCount === 4 && completedCount < 4) {
+      setShowConfetti(true);
+    }
   };
+
   return <>
       <PageContainer title="Dashboard">
         <div className="space-y-8">
@@ -90,30 +111,66 @@ const HomePage = () => {
           
           {/* Habit rings */}
           <div>
-            <h3 className="font-display text-lg mb-4">Daily Discipline Tonnage</h3>
-            <div className="grid grid-cols-4 gap-3">
-              {Object.entries(habits).map(([habit, progress]) => <div key={habit} className="flex flex-col items-center">
-                  <div className="relative">
-                    <div className="habit-ring w-16 h-16 border-accent/30">
-                      <div className="habit-ring border-primary" style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    borderTopColor: 'transparent',
-                    borderRightColor: progress >= 50 ? undefined : 'transparent',
-                    borderBottomColor: progress >= 25 ? undefined : 'transparent',
-                    borderLeftColor: progress >= 75 ? undefined : 'transparent',
-                    transform: `rotate(${45 + progress * 3.6}deg)`
-                  }}></div>
-                      <div className="habit-ring-pulse w-14 h-14 border-primary/20"></div>
-                    </div>
-                    <span className="absolute inset-0 flex items-center justify-center text-sm font-medium">
-                      {progress}%
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground mt-2 capitalize">{habit}</span>
-                </div>)}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display text-lg">Daily Discipline Tonnage</h3>
+              <div className="flex items-center gap-2">
+                {currentStreak >= 3 && (
+                  <Badge variant="accent" className="animate-pulse">
+                    🔥 {currentStreak} Day Streak!
+                  </Badge>
+                )}
+                <span className="text-sm text-muted-foreground">
+                  {completedCount}/4 completed
+                </span>
+              </div>
             </div>
+            
+            <div className="grid grid-cols-4 gap-3">
+              {Object.entries(todaysHabits).map(([habit, completed]) => {
+                const progress = getProgressPercentage(habit as keyof typeof todaysHabits);
+                
+                return (
+                  <div key={habit} className="flex flex-col items-center">
+                    <div 
+                      className="relative cursor-pointer group"
+                      onClick={() => handleHabitToggle(habit as keyof typeof todaysHabits)}
+                    >
+                      <div className={`habit-ring w-16 h-16 border-4 rounded-full transition-all duration-300 ${
+                        completed 
+                          ? 'border-primary bg-primary/10 shadow-lg' 
+                          : 'border-accent/30 hover:border-accent/50'
+                      }`}>
+                        <div className="habit-ring-pulse w-14 h-14 border-primary/20"></div>
+                      </div>
+                      
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Checkbox 
+                          checked={completed}
+                          disabled={isLoading}
+                          className="w-6 h-6"
+                          onCheckedChange={() => handleHabitToggle(habit as keyof typeof todaysHabits)}
+                        />
+                      </div>
+                      
+                      {completed && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+                          <span className="text-xs text-white">✓</span>
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground mt-2 capitalize">{habit}</span>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {completedCount === 4 && (
+              <div className="mt-4 p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
+                <p className="text-sm font-medium text-primary">
+                  🎉 Perfect day! You've completed all your discipline habits!
+                </p>
+              </div>
+            )}
           </div>
           
           {/* Estimated 1RM chart */}
@@ -226,6 +283,12 @@ const HomePage = () => {
       </PageContainer>
       
       <Navbar />
+      
+      <Confetti 
+        show={showConfetti} 
+        onComplete={() => setShowConfetti(false)} 
+      />
     </>;
 };
+
 export default HomePage;
