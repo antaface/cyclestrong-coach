@@ -1,5 +1,7 @@
 
 import { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from '@/hooks/use-toast';
 
 interface HabitData {
@@ -25,36 +27,49 @@ export const useHabits = () => {
   const [habitHistory, setHabitHistory] = useState<HabitEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock user ID - TODO: Replace with actual auth user ID
-  const mockUserId = "user-123";
+  // Get user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id;
   
   // Get today's date in YYYY-MM-DD format
   const getTodaysDate = () => {
     return new Date().toISOString().split('T')[0];
   };
 
-  // Initialize habits data on mount
+  // Initialize habits data on mount or when user changes
   useEffect(() => {
-    loadTodaysHabits();
-    loadHabitHistory();
-  }, []);
+    if (userId) {
+      loadTodaysHabits();
+      loadHabitHistory();
+    }
+  }, [userId]);
 
-  // TODO: Replace with actual Supabase query
+  // Load today's habits from Supabase
   const loadTodaysHabits = async () => {
+    if (!userId) return;
+    
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Mock data - check if we already have habits for today
       const today = getTodaysDate();
-      const existingEntry = habitHistory.find(entry => entry.date === today);
       
-      if (existingEntry) {
-        setTodaysHabits(existingEntry.habits);
+      const { data, error } = await supabase
+        .from('habits')
+        .select('training, protein, sleep, mindset')
+        .eq('user_id', userId)
+        .eq('date', today)
+        .single();
+      
+      if (error) {
+        // If error is "No rows found", that's expected for a new day
+        if (error.code !== 'PGRST116') {
+          console.error("Error loading today's habits:", error);
+        }
+        return;
       }
       
-      console.log(`[MOCK DB] Loading habits for user ${mockUserId} on ${today}`);
+      if (data) {
+        setTodaysHabits(data);
+      }
     } catch (error) {
       console.error("Error loading today's habits:", error);
     } finally {
@@ -62,59 +77,117 @@ export const useHabits = () => {
     }
   };
 
-  // TODO: Replace with actual Supabase query
+  // Load habit history from Supabase
   const loadHabitHistory = async () => {
+    if (!userId) return;
+    
     try {
-      // Mock habit history for streak calculation
-      const mockHistory: HabitEntry[] = [
-        {
-          date: '2025-01-20',
-          habits: { training: true, protein: true, sleep: true, mindset: false }
-        },
-        {
-          date: '2025-01-21',
-          habits: { training: true, protein: true, sleep: false, mindset: true }
-        },
-        {
-          date: '2025-01-22',
-          habits: { training: false, protein: true, sleep: true, mindset: true }
-        }
-      ];
+      // Get habits from the last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
       
-      setHabitHistory(mockHistory);
-      console.log("[MOCK DB] Loaded habit history:", mockHistory);
+      const { data, error } = await supabase
+        .from('habits')
+        .select('date, training, protein, sleep, mindset')
+        .eq('user_id', userId)
+        .gte('date', thirtyDaysAgoStr)
+        .order('date', { ascending: false });
+      
+      if (error) {
+        console.error("Error loading habit history:", error);
+        return;
+      }
+      
+      // Transform data to match expected format
+      const formattedData: HabitEntry[] = data.map(entry => {
+        const { date, ...habits } = entry;
+        return {
+          date,
+          habits: habits as HabitData
+        };
+      });
+      
+      setHabitHistory(formattedData);
     } catch (error) {
       console.error("Error loading habit history:", error);
     }
   };
 
-  // TODO: Replace with actual Supabase upsert
+  // Save habit to Supabase database
   const saveHabitToDatabase = async (habitType: keyof HabitData, checked: boolean) => {
+    if (!userId) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to track your habits",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
     setIsLoading(true);
     try {
       const today = getTodaysDate();
       
-      // Simulate database upsert operation
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Check if today's row exists
+      const { data: existingData, error: checkError } = await supabase
+        .from('habits')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('date', today)
+        .single();
       
-      console.log(`[MOCK DB] Upserting habit for user ${mockUserId}:`, {
-        user_id: mockUserId,
-        date: today,
-        [habitType]: checked,
-        updated_at: new Date().toISOString()
-      });
+      let success = false;
+      
+      if (checkError && checkError.code === 'PGRST116') {
+        // Row doesn't exist, insert new row with defaults and this habit
+        const newHabits: Record<string, any> = {
+          training: false,
+          protein: false,
+          sleep: false,
+          mindset: false,
+          [habitType]: checked,
+          user_id: userId,
+          date: today
+        };
+        
+        const { error: insertError } = await supabase
+          .from('habits')
+          .insert([newHabits]);
+        
+        if (insertError) {
+          throw insertError;
+        }
+        success = true;
+      } else if (!checkError) {
+        // Row exists, update just this habit
+        const { error: updateError } = await supabase
+          .from('habits')
+          .update({ [habitType]: checked })
+          .eq('user_id', userId)
+          .eq('date', today);
+        
+        if (updateError) {
+          throw updateError;
+        }
+        success = true;
+      }
       
       // Update local state
-      const newHabits = { ...todaysHabits, [habitType]: checked };
-      setTodaysHabits(newHabits);
+      if (success) {
+        // Update today's habits
+        const newHabits = { ...todaysHabits, [habitType]: checked };
+        setTodaysHabits(newHabits);
+        
+        // Update history (ensure we don't duplicate entries)
+        const today = getTodaysDate();
+        const updatedHistory = habitHistory.filter(entry => entry.date !== today);
+        updatedHistory.push({ date: today, habits: newHabits });
+        setHabitHistory(updatedHistory);
+      }
       
-      // Update history
-      const updatedHistory = habitHistory.filter(entry => entry.date !== today);
-      updatedHistory.push({ date: today, habits: newHabits });
-      setHabitHistory(updatedHistory);
-      
-      return true;
-    } catch (error) {
+      return success;
+    } catch (error: any) {
       console.error("Error saving habit:", error);
       toast({
         title: "Error",
@@ -148,7 +221,10 @@ export const useHabits = () => {
   const calculateStreak = () => {
     if (habitHistory.length === 0) return 0;
     
-    const sortedHistory = [...habitHistory].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const sortedHistory = [...habitHistory].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    
     let streak = 0;
     
     for (const entry of sortedHistory) {
