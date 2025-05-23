@@ -3,10 +3,27 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading, needsOnboarding } = useAuth();
+
+  useEffect(() => {
+    // If user is authenticated, redirect appropriately
+    if (!loading && user) {
+      if (needsOnboarding) {
+        navigate("/onboarding");
+      } else {
+        navigate("/home");
+      }
+    }
+  }, [user, loading, needsOnboarding, navigate]);
+
+  // Show loading or nothing while checking auth status
+  if (loading || user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
@@ -26,31 +43,20 @@ const LandingPage = () => {
         </p>
         
         <div className="flex flex-col gap-4 mt-10">
-          {user ? (
-            <Button 
-              onClick={() => navigate("/")}
-              className="w-full py-6 text-lg"
-            >
-              Go to Dashboard
-            </Button>
-          ) : (
-            <>
-              <Button 
-                onClick={() => navigate("/auth", { state: { tab: 'signup' } })}
-                className="w-full py-6 text-lg"
-              >
-                Get Started
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                onClick={() => navigate("/auth", { state: { tab: 'login' } })}
-                className="border-primary text-primary hover:bg-primary/5 w-full py-6 text-lg"
-              >
-                I Already Have an Account
-              </Button>
-            </>
-          )}
+          <Button 
+            onClick={() => navigate("/auth", { state: { tab: 'signup' } })}
+            className="w-full py-6 text-lg"
+          >
+            Get Started
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/auth", { state: { tab: 'login' } })}
+            className="border-primary text-primary hover:bg-primary/5 w-full py-6 text-lg"
+          >
+            I Already Have an Account
+          </Button>
         </div>
         
         <p className="text-xs text-muted-foreground mt-8">

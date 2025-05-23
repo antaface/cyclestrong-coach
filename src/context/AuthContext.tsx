@@ -44,7 +44,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       // If the user has a profile but critical fields are missing, they need onboarding
-      setNeedsOnboarding(!data.one_rm || !data.cycle_length || !data.goal);
+      const needsOnboarding = !data.one_rm || !data.cycle_length || !data.goal;
+      setNeedsOnboarding(needsOnboarding);
+      
+      // If user is authenticated and doesn't need onboarding, redirect to home
+      if (!needsOnboarding) {
+        navigate('/home');
+      }
     } catch (error) {
       console.error("Error checking onboarding status:", error);
       setNeedsOnboarding(true);
@@ -63,12 +69,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           
           // Check if user needs onboarding after sign in
           if (session?.user) {
-            checkOnboardingStatus(session.user.id);
+            setTimeout(() => {
+              checkOnboardingStatus(session.user.id);
+            }, 0);
           }
         } else if (event === 'SIGNED_OUT') {
           toast.info("Signed out");
           setNeedsOnboarding(false);
-          navigate('/auth');
+          navigate('/landing');
         }
       }
     );
@@ -79,7 +87,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        checkOnboardingStatus(session.user.id);
+        setTimeout(() => {
+          checkOnboardingStatus(session.user.id);
+        }, 0);
       }
       
       setLoading(false);
@@ -103,7 +113,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) throw error;
-      setNeedsOnboarding(true);
+      
+      // Note: The onAuthStateChange handler will take care of navigation
       toast.success("Signup successful! Complete your profile setup.");
     } catch (error: any) {
       toast.error(error.message || "An error occurred during signup");
@@ -119,6 +130,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) throw error;
+      
+      // Note: The onAuthStateChange handler will take care of navigation
     } catch (error: any) {
       toast.error(error.message || "An error occurred during sign in");
       throw error;

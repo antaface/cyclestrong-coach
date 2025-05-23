@@ -29,9 +29,10 @@ function App() {
     <AuthProvider>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/landing" replace />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/onboarding" element={<OnboardingPage />} />
           
           {/* Protected routes */}
           <Route element={<ProtectedRoute children={null} />}>
@@ -44,7 +45,6 @@ function App() {
             <Route path="/form-check" element={<FormCheckPage />} />
           </Route>
           
-          <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />

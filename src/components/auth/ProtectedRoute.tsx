@@ -15,9 +15,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   useEffect(() => {
     if (!loading) {
-      // If not authenticated, redirect to auth page
+      // If not authenticated, redirect to landing page
       if (!user) {
-        navigate("/auth");
+        navigate("/landing");
       } 
       // If authenticated but needs onboarding and not already on onboarding page
       else if (needsOnboarding && location.pathname !== '/onboarding') {

@@ -74,7 +74,7 @@ export function useOnboardingSubmission() {
         toast.error("Profile saved but there was an issue generating your cycle calendar. Please try refreshing.");
       }
       
-      navigate("/");
+      navigate("/home");
       return true;
     } catch (error: any) {
       console.error("Error saving profile:", error);
