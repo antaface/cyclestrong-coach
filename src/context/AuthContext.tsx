@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error.code === 'PGRST116') {
           console.log("No profile found, user needs onboarding");
           setNeedsOnboarding(true);
-          navigate('/onboarding');
           return;
         }
         throw error;
@@ -50,13 +49,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const missingOnboarding = !data.one_rm || !data.cycle_length || !data.goal;
       console.log("Profile data:", data, "Needs onboarding:", missingOnboarding);
       setNeedsOnboarding(missingOnboarding);
-      
-      // If user is authenticated and doesn't need onboarding, redirect to home
-      if (!missingOnboarding) {
-        navigate('/home');
-      } else {
-        navigate('/onboarding');
-      }
     } catch (error) {
       console.error("Error checking onboarding status:", error);
       setNeedsOnboarding(true);
