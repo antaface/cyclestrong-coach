@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -122,8 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Signup successful:", data);
       toast.success("Signup successful! Please sign in to complete your profile setup.");
       
-      // After successful signup, we should direct to login
-      // The onAuthStateChange handler will take care of navigation if auto-login happens
+      // The onAuthStateChange handler will take care of navigation via routeAfterAuth
     } catch (error: any) {
       console.error("Signup error:", error);
       toast.error(error.message || "An error occurred during signup");
@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
       
       console.log("Signin successful:", data.user?.email);
-      // Note: The onAuthStateChange handler will take care of navigation
+      // The onAuthStateChange handler will take care of navigation via routeAfterAuth
     } catch (error: any) {
       console.error("Signin error:", error);
       toast.error(error.message || "An error occurred during sign in");

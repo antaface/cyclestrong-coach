@@ -30,7 +30,7 @@ export const routeAfterAuth = async (navigate: (path: string) => void, currentPa
     } else {
       // User is onboarded
       if (currentPath === '/auth' || currentPath === '/landing' || currentPath === '/onboarding') {
-        navigate('/home'); // Changed from '/dashboard' to '/home' to match existing routes
+        navigate('/home');
       }
     }
   } catch (error) {
