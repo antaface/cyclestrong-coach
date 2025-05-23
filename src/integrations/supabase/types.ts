@@ -120,6 +120,7 @@ export type Database = {
           goal: string
           id: string
           last_period: string
+          onboarded: boolean
           one_rm: Json | null
           training_age: string
           updated_at: string
@@ -130,6 +131,7 @@ export type Database = {
           goal: string
           id: string
           last_period: string
+          onboarded?: boolean
           one_rm?: Json | null
           training_age: string
           updated_at?: string
@@ -140,6 +142,7 @@ export type Database = {
           goal?: string
           id?: string
           last_period?: string
+          onboarded?: boolean
           one_rm?: Json | null
           training_age?: string
           updated_at?: string

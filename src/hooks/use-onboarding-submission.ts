@@ -54,7 +54,8 @@ export function useOnboardingSubmission() {
           bench: formData.oneRM.bench || 0,
           deadlift: formData.oneRM.deadlift || 0,
           hip_thrust: formData.oneRM.hipThrust || 0,
-        }
+        },
+        onboarded: true // Mark the user as onboarded
       };
       
       console.log("Saving profile data:", profileData);

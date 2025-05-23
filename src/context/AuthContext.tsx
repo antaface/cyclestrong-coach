@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -27,10 +26,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Check if user has completed onboarding by checking their profile
   const checkOnboardingStatus = async (userId: string) => {
     try {
-      console.log("Checking onboarding status for user:", userId);
       const { data, error } = await supabase
         .from('profiles')
-        .select('last_period, goal, training_age, cycle_length, one_rm')
+        .select('onboarded')
         .eq('id', userId)
         .single();
       
@@ -38,17 +36,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // If we get a "No rows found" error, it means the profile doesn't exist,
         // which indicates the user needs onboarding
         if (error.code === 'PGRST116') {
-          console.log("No profile found, user needs onboarding");
           setNeedsOnboarding(true);
           return;
         }
         throw error;
       }
       
-      // If the user has a profile but critical fields are missing, they need onboarding
-      const missingOnboarding = !data.one_rm || !data.cycle_length || !data.goal;
-      console.log("Profile data:", data, "Needs onboarding:", missingOnboarding);
-      setNeedsOnboarding(missingOnboarding);
+      // Use the onboarded flag to determine if user needs onboarding
+      setNeedsOnboarding(data.onboarded === false);
     } catch (error) {
       console.error("Error checking onboarding status:", error);
       setNeedsOnboarding(true);

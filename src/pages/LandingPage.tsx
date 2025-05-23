@@ -3,31 +3,21 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
+import { useAuthRouting } from "@/hooks/use-auth-routing";
+import AuthRoutingLoading from "@/components/auth/AuthRoutingLoading";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { user, loading, needsOnboarding } = useAuth();
+  const { user } = useAuth();
+  const { loading } = useAuthRouting();
 
-  useEffect(() => {
-    // Only redirect if user is authenticated AND we've confirmed their onboarding status
-    if (!loading && user) {
-      console.log("User is authenticated on landing page, needsOnboarding:", needsOnboarding);
-      // Only redirect if we're sure they need onboarding or don't need it
-      if (needsOnboarding === true) {
-        navigate("/onboarding");
-      } else if (needsOnboarding === false) {
-        navigate("/home");
-      }
-      // If needsOnboarding is still being determined, don't redirect
-    }
-  }, [user, loading, needsOnboarding, navigate]);
-
-  // Show loading or nothing while checking auth status
-  if (loading || user) {
-    return null;
+  // Show loading while checking auth routing
+  if (loading) {
+    return <AuthRoutingLoading />;
   }
 
+  // If user is still on landing page after auth routing check,
+  // it means they're not authenticated or should be allowed to stay here
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
       <div className="text-center space-y-8 max-w-md">
