@@ -10,14 +10,16 @@ const LandingPage = () => {
   const { user, loading, needsOnboarding } = useAuth();
 
   useEffect(() => {
-    // If user is authenticated, redirect appropriately
+    // Only redirect if user is authenticated AND we've confirmed their onboarding status
     if (!loading && user) {
       console.log("User is authenticated on landing page, needsOnboarding:", needsOnboarding);
-      if (needsOnboarding) {
+      // Only redirect if we're sure they need onboarding or don't need it
+      if (needsOnboarding === true) {
         navigate("/onboarding");
-      } else {
+      } else if (needsOnboarding === false) {
         navigate("/home");
       }
+      // If needsOnboarding is still being determined, don't redirect
     }
   }, [user, loading, needsOnboarding, navigate]);
 

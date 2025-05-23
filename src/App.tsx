@@ -35,10 +35,10 @@ function App() {
           {/* Public routes */}
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
           
-          {/* Protected routes */}
+          {/* Apply ProtectedRoute to both onboarding and other authenticated routes */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/program" element={<ProgramPage />} />

@@ -11,12 +11,14 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     if (!loading) {
-      // If not authenticated, redirect to landing page
-      if (!user) {
+      // If not authenticated and not on landing/auth page, redirect to landing page
+      if (!user && !location.pathname.includes('/landing') && !location.pathname.includes('/auth')) {
+        console.log("Not authenticated, redirecting to landing");
         navigate("/landing");
       } 
-      // If authenticated but needs onboarding and not already on onboarding page
-      else if (needsOnboarding && location.pathname !== '/onboarding') {
+      // If authenticated and needs onboarding and not already on onboarding page
+      else if (user && needsOnboarding && location.pathname !== '/onboarding') {
+        console.log("Needs onboarding, redirecting to onboarding");
         navigate("/onboarding");
       }
     }
@@ -24,6 +26,12 @@ const ProtectedRoute = () => {
 
   if (loading) {
     return <WorkoutPageLoading />;
+  }
+
+  // Allow the user to stay on landing page even when authenticated
+  // This prevents unwanted redirects from landing page
+  if (location.pathname === '/landing') {
+    return <Outlet />;
   }
 
   return user ? <Outlet /> : null;
