@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings, User, ChevronRight, Bell, Calendar, Dumbbell, Clock, LogOut, Camera, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -19,43 +19,85 @@ import {
 import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 import { CyclePhase } from "@/types";
+
+interface UserProfile {
+  id: string;
+  cycle_length: number;
+  last_period: string;
+  training_age: string;
+  goal: string;
+  one_rm?: Record<string, number>;
+}
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const [isPushNotificationsEnabled, setIsPushNotificationsEnabled] = useState(true);
   const [isCycleRemindersEnabled, setIsCycleRemindersEnabled] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
   
-  // Mock user profile data
-  const profile = {
-    name: "Sarah Johnson",
-    email: user?.email || "sarah.johnson@example.com",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    personalInfo: {
-      age: 28,
-      height: "5'6\"",
-      weight: "145 lbs",
-      trainingAge: "Intermediate",
-      goal: "Strength"
-    },
-    cycle: {
-      length: 28,
-      lastPeriod: new Date(2025, 4, 5),
-      currentDay: 10,
-      currentPhase: CyclePhase.FOLLICULAR
-    },
-    training: {
-      age: "intermediate",
-      goal: "strength",
-      oneRM: {
-        squat: 100,
-        bench: 60,
-        deadlift: 130,
-        hipThrust: 140
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+          
+        if (error) {
+          console.error('Error fetching profile:', error);
+        } else {
+          setUserProfile(data);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    
+    fetchUserProfile();
+  }, [user]);
+
+  // Get user name from metadata or email
+  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+  const userAvatar = user?.user_metadata?.avatar_url || "https://randomuser.me/api/portraits/women/44.jpg";
+
+  // Mock personal info with defaults
+  const personalInfo = {
+    age: 28,
+    height: "5'6\"",
+    weight: "145 lbs",
+    trainingAge: userProfile?.training_age || "Intermediate",
+    goal: userProfile?.goal || "Strength"
   };
+
+  // Default 1RM values if not available
+  const oneRM = userProfile?.one_rm || {
+    squat: 100,
+    bench: 60,
+    deadlift: 130,
+    hipThrust: 140
+  };
+
+  if (loading) {
+    return (
+      <>
+        <PageContainer title="Profile">
+          <div className="space-y-8">
+            <div className="text-center">Loading profile...</div>
+          </div>
+        </PageContainer>
+        <Navbar />
+      </>
+    );
+  }
 
   return (
     <>
@@ -67,8 +109,8 @@ const ProfilePage = () => {
               <div className="relative">
                 <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
                   <img
-                    src={profile.avatar}
-                    alt={profile.name}
+                    src={userAvatar}
+                    alt={userName}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -77,8 +119,8 @@ const ProfilePage = () => {
                 </button>
               </div>
               <div className="flex-1">
-                <h2 className="font-display text-xl">{profile.name}</h2>
-                <p className="text-sm text-muted-foreground">{profile.email}</p>
+                <h2 className="font-display text-xl">{userName}</h2>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
             </div>
             
@@ -99,31 +141,31 @@ const ProfilePage = () => {
             <div className="space-y-4">
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Age</span>
-                <span className="font-display">{profile.personalInfo.age}</span>
+                <span className="font-display">{personalInfo.age}</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Height</span>
-                <span className="font-display">{profile.personalInfo.height}</span>
+                <span className="font-display">{personalInfo.height}</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Weight</span>
-                <span className="font-display">{profile.personalInfo.weight}</span>
+                <span className="font-display">{personalInfo.weight}</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Training Age</span>
-                <span className="font-display">{profile.personalInfo.trainingAge}</span>
+                <span className="font-display">{personalInfo.trainingAge}</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Goal</span>
-                <span className="font-display">{profile.personalInfo.goal}</span>
+                <span className="font-display">{personalInfo.goal}</span>
               </div>
             </div>
           </div>
@@ -150,25 +192,25 @@ const ProfilePage = () => {
             <div className="space-y-4">
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Squat</span>
-                <span className="font-display">{profile.training.oneRM.squat} kg</span>
+                <span className="font-display">{oneRM.squat} kg</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Bench Press</span>
-                <span className="font-display">{profile.training.oneRM.bench} kg</span>
+                <span className="font-display">{oneRM.bench} kg</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Deadlift</span>
-                <span className="font-display">{profile.training.oneRM.deadlift} kg</span>
+                <span className="font-display">{oneRM.deadlift} kg</span>
               </div>
               <Separator />
               
               <div className="flex justify-between py-3">
                 <span className="text-muted-foreground">Hip Thrust</span>
-                <span className="font-display">{profile.training.oneRM.hipThrust} kg</span>
+                <span className="font-display">{oneRM.hipThrust} kg</span>
               </div>
             </div>
             

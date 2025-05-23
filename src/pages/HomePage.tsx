@@ -1,3 +1,4 @@
+
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -9,6 +10,7 @@ import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
 import { Confetti } from "@/components/ui/confetti";
 import { useHabits } from "@/hooks/use-habits";
+import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import type { HabitType } from "@/types/habits";
 
@@ -75,6 +77,7 @@ const habitIcons = {
 };
 
 const HomePage = () => {
+  const { user } = useAuth();
   const { 
     todaysHabits, 
     isLoading, 
@@ -86,6 +89,9 @@ const HomePage = () => {
   
   const [showConfetti, setShowConfetti] = useState(false);
   const completedCount = getCompletedCount();
+
+  // Get user name from metadata or email
+  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
 
   // Show confetti when all habits are completed
   const handleHabitToggle = async (habitType: HabitType) => {
@@ -103,7 +109,7 @@ const HomePage = () => {
         <div className="space-y-8">
           {/* Welcome section */}
           <div>
-            <h2 className="text-2xl font-display mb-1">Welcome, Sarah</h2>
+            <h2 className="text-2xl font-display mb-1">Welcome, {userName}</h2>
             <p className="text-muted-foreground">
               You're in your <span className="font-medium text-joyful-cream">Follicular Phase</span> - Day 10 of your cycle
             </p>
