@@ -145,32 +145,31 @@ const HomePage = () => {
                       className="relative cursor-pointer group"
                       onClick={() => handleHabitToggle(habit as HabitType)}
                     >
-                      <div className={`habit-ring w-16 h-16 border-4 rounded-full transition-all duration-300 ${
+                      <div className={`habit-ring w-16 h-16 border-4 rounded-full transition-all duration-300 flex items-center justify-center ${
                         completed 
                           ? 'border-primary bg-primary/10 shadow-lg' 
                           : 'border-accent/30 hover:border-accent/50'
                       }`}>
                         <div className="habit-ring-pulse w-14 h-14 border-primary/20"></div>
-                      </div>
-                      
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="relative">
-                          <Checkbox 
-                            checked={completed}
-                            disabled={isLoading}
-                            className="w-6 h-6"
-                            onCheckedChange={() => handleHabitToggle(habit as HabitType)}
+                        
+                        {/* Centered icon */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <IconComponent 
+                            size={16} 
+                            className={`transition-colors duration-200 ${
+                              completed ? 'text-white' : 'text-primary'
+                            }`}
                           />
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <IconComponent 
-                              size={12} 
-                              className={`transition-colors duration-200 ${
-                                completed ? 'text-white' : 'text-primary'
-                              }`}
-                            />
-                          </div>
                         </div>
                       </div>
+                      
+                      {/* Hidden checkbox for accessibility */}
+                      <Checkbox 
+                        checked={completed}
+                        disabled={isLoading}
+                        className="sr-only"
+                        onCheckedChange={() => handleHabitToggle(habit as HabitType)}
+                      />
                       
                       {completed && (
                         <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
