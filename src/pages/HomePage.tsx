@@ -1,4 +1,3 @@
-
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -61,7 +60,6 @@ const oneRmData = [{
   bench: 55,
   deadlift: 127.5
 }];
-
 const weeklyVolumeData = [{
   name: "Week 1",
   volume: 12000
@@ -75,27 +73,32 @@ const weeklyVolumeData = [{
   name: "Week 4",
   volume: 10000
 }];
-
 const habitIcons = {
   training: Dumbbell,
   protein: Apple,
   sleep: Moon,
   mindset: Brain
 };
-
 const HomePage = () => {
-  const { user } = useAuth();
-  const { userProfile, loading: profileLoading } = useProfileData();
-  const { generateProgram, isGenerating } = useProgram();
-  const { 
-    todaysHabits, 
-    isLoading, 
-    toggleHabit, 
-    getCompletedCount, 
+  const {
+    user
+  } = useAuth();
+  const {
+    userProfile,
+    loading: profileLoading
+  } = useProfileData();
+  const {
+    generateProgram,
+    isGenerating
+  } = useProgram();
+  const {
+    todaysHabits,
+    isLoading,
+    toggleHabit,
+    getCompletedCount,
     getProgressPercentage,
-    currentStreak 
+    currentStreak
   } = useHabits();
-  
   const [showConfetti, setShowConfetti] = useState(false);
   const completedCount = getCompletedCount();
 
@@ -108,18 +111,19 @@ const HomePage = () => {
   // Show confetti when all habits are completed
   const handleHabitToggle = async (habitType: HabitType) => {
     await toggleHabit(habitType);
-    
+
     // Check if this completion makes it 4/4
-    const newCompletedCount = Object.values({...todaysHabits, [habitType]: !todaysHabits[habitType]}).filter(Boolean).length;
+    const newCompletedCount = Object.values({
+      ...todaysHabits,
+      [habitType]: !todaysHabits[habitType]
+    }).filter(Boolean).length;
     if (newCompletedCount === 4 && completedCount < 4) {
       setShowConfetti(true);
     }
   };
-
   const handleStartNewProgram = async () => {
     await generateProgram();
   };
-
   return <>
       <PageContainer title="Dashboard">
         <div className="space-y-10">
@@ -127,16 +131,12 @@ const HomePage = () => {
           <div className="space-y-4">
             <div>
               <h2 className="text-2xl font-display mb-1">Welcome, {userName}</h2>
-              {cycleInfo ? (
-                <p className="text-muted-foreground">
-                  You're in your <span className="font-medium text-joyful-cream">{cycleInfo.phase}</span> - Day {cycleInfo.day} of your cycle
-                </p>
-              ) : (
-                <p className="text-muted-foreground">Loading cycle information...</p>
-              )}
+              {cycleInfo ? <p className="text-muted-foreground">
+                  You're in your <span className="font-medium text-joyful-coral">{cycleInfo.phase}</span> - Day {cycleInfo.day} of your cycle
+                </p> : <p className="text-muted-foreground">Loading cycle information...</p>}
             </div>
             <Card>
-              <CardHeader className="p-4">
+              <CardHeader className="p-4 py-[17px]">
                 <CardTitle className="text-xl">Today's Focus</CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0">
@@ -152,11 +152,9 @@ const HomePage = () => {
             <div className="flex items-center justify-between">
               <h3 className="font-display text-lg">Daily Discipline Tonnage</h3>
               <div className="flex items-center gap-2">
-                {currentStreak >= 3 && (
-                  <Badge variant="accent" className="animate-pulse">
+                {currentStreak >= 3 && <Badge variant="accent" className="animate-pulse">
                     🔥 {currentStreak} Day Streak!
-                  </Badge>
-                )}
+                  </Badge>}
                 <span className="text-sm text-muted-foreground">
                   {completedCount}/4 completed
                 </span>
@@ -165,67 +163,40 @@ const HomePage = () => {
             
             <div className="grid grid-cols-4 gap-3">
               {Object.entries(todaysHabits).map(([habit, completed]) => {
-                const progress = getProgressPercentage(habit as HabitType);
-                const IconComponent = habitIcons[habit as HabitType];
-                
-                return (
-                  <div key={habit} className="flex flex-col items-center">
-                    <div 
-                      className="relative cursor-pointer group"
-                      onClick={() => handleHabitToggle(habit as HabitType)}
-                    >
-                      <div className={`habit-ring w-16 h-16 border-4 rounded-full transition-all duration-300 flex items-center justify-center ${
-                        completed 
-                          ? 'border-primary bg-primary/10 shadow-lg' 
-                          : 'border-accent/30 hover:border-accent/50'
-                      }`}>
+              const progress = getProgressPercentage(habit as HabitType);
+              const IconComponent = habitIcons[habit as HabitType];
+              return <div key={habit} className="flex flex-col items-center">
+                    <div className="relative cursor-pointer group" onClick={() => handleHabitToggle(habit as HabitType)}>
+                      <div className={`habit-ring w-16 h-16 border-4 rounded-full transition-all duration-300 flex items-center justify-center ${completed ? 'border-primary bg-primary/10 shadow-lg' : 'border-accent/30 hover:border-accent/50'}`}>
                         <div className="habit-ring-pulse w-14 h-14 border-primary/20"></div>
                         
                         {/* Centered icon */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <IconComponent 
-                            size={16} 
-                            className={`transition-colors duration-200 ${
-                              completed ? 'text-white' : 'text-primary'
-                            }`}
-                          />
+                          <IconComponent size={16} className={`transition-colors duration-200 ${completed ? 'text-white' : 'text-primary'}`} />
                         </div>
                       </div>
                       
                       {/* Hidden checkbox for accessibility */}
-                      <Checkbox 
-                        checked={completed}
-                        disabled={isLoading}
-                        className="sr-only"
-                        onCheckedChange={() => handleHabitToggle(habit as HabitType)}
-                      />
+                      <Checkbox checked={completed} disabled={isLoading} className="sr-only" onCheckedChange={() => handleHabitToggle(habit as HabitType)} />
                       
-                      {completed && (
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+                      {completed && <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
                           <span className="text-xs text-white">✓</span>
-                        </div>
-                      )}
+                        </div>}
                     </div>
                     <span className="text-xs text-muted-foreground mt-2 capitalize">{habit}</span>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </div>
             
-            {completedCount === 4 && (
-              <div className="mt-4 p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
+            {completedCount === 4 && <div className="mt-4 p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
                 <p className="text-sm font-medium text-primary">
                   🎉 Perfect day! You've completed all your discipline habits!
                 </p>
-              </div>
-            )}
+              </div>}
             
             {/* View Habit History Link */}
             <div className="text-center">
-              <Link 
-                to="/habit-history" 
-                className="text-sm text-muted-foreground underline hover:text-primary transition-colors"
-              >
+              <Link to="/habit-history" className="text-sm text-muted-foreground underline hover:text-primary transition-colors">
                 View Habit History
               </Link>
             </div>
@@ -242,12 +213,7 @@ const HomePage = () => {
                 </div>
                 <Progress value={37.5} className="h-3 rounded-full" />
               </div>
-              <Button 
-                onClick={handleStartNewProgram}
-                disabled={isGenerating}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={handleStartNewProgram} disabled={isGenerating} variant="outline" className="w-full">
                 {isGenerating ? 'Generating...' : 'Start New Program'}
               </Button>
             </div>
@@ -337,11 +303,7 @@ const HomePage = () => {
       <Navbar />
       <BackToTopButton />
       
-      <Confetti 
-        show={showConfetti} 
-        onComplete={() => setShowConfetti(false)} 
-      />
+      <Confetti show={showConfetti} onComplete={() => setShowConfetti(false)} />
     </>;
 };
-
 export default HomePage;
