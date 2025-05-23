@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import ProgramPage from './pages/ProgramPage';
 import WorkoutPage from './pages/WorkoutPage';
 import CalendarPage from './pages/CalendarPage';
+import HabitHistoryPage from './pages/HabitHistoryPage';
 import OnboardingPage from './pages/OnboardingPage';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -39,6 +40,7 @@ function App() {
             <Route path="/program" element={<ProgramPage />} />
             <Route path="/workout" element={<WorkoutPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/habit-history" element={<HabitHistoryPage />} />
             <Route path="/form-check" element={<FormCheckPage />} />
           </Route>
           
