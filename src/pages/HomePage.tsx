@@ -1,4 +1,3 @@
-
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -192,6 +191,16 @@ const HomePage = () => {
                 </p>
               </div>
             )}
+            
+            {/* View Habit History Link */}
+            <div className="mt-4 text-center">
+              <Link 
+                to="/habit-history" 
+                className="text-sm text-muted-foreground underline hover:text-primary transition-colors"
+              >
+                View Habit History
+              </Link>
+            </div>
           </div>
           
           {/* Estimated 1RM chart */}
