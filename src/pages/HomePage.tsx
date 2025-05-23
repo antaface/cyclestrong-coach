@@ -122,22 +122,24 @@ const HomePage = () => {
 
   return <>
       <PageContainer title="Dashboard">
-        <div className="space-y-8">
+        <div className="space-y-10">
           {/* Welcome section */}
-          <div>
-            <h2 className="text-2xl font-display mb-1">Welcome, {userName}</h2>
-            {cycleInfo ? (
-              <p className="text-muted-foreground">
-                You're in your <span className="font-medium text-joyful-cream">{cycleInfo.phase}</span> - Day {cycleInfo.day} of your cycle
-              </p>
-            ) : (
-              <p className="text-muted-foreground">Loading cycle information...</p>
-            )}
-            <Card className="mt-4">
-              <CardHeader className="pb-2 p-2">
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-2xl font-display mb-1">Welcome, {userName}</h2>
+              {cycleInfo ? (
+                <p className="text-muted-foreground">
+                  You're in your <span className="font-medium text-joyful-cream">{cycleInfo.phase}</span> - Day {cycleInfo.day} of your cycle
+                </p>
+              ) : (
+                <p className="text-muted-foreground">Loading cycle information...</p>
+              )}
+            </div>
+            <Card>
+              <CardHeader className="p-4">
                 <CardTitle className="text-xl">Today's Focus</CardTitle>
               </CardHeader>
-              <CardContent className="p-2">
+              <CardContent className="p-4 pt-0">
                 <p className="text-muted-foreground">
                   {cycleInfo ? cycleInfo.phaseDescription : 'Loading personalized recommendations...'}
                 </p>
@@ -145,30 +147,9 @@ const HomePage = () => {
             </Card>
           </div>
 
-          {/* Current Program Progress - moved above graphs */}
-          <div>
-            <h3 className="font-display mb-3 text-xl">Current Program Progress</h3>
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Cycle-Adaptive Strength</span>
-                  <span className="font-medium">Week 3 of 8</span>
-                </div>
-                <Progress value={37.5} className="h-3 rounded-full" />
-              </div>
-              <Button 
-                onClick={handleStartNewProgram}
-                disabled={isGenerating}
-                className="w-full"
-              >
-                {isGenerating ? 'Generating...' : 'Start New Program'}
-              </Button>
-            </div>
-          </div>
-          
           {/* Habit rings */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
               <h3 className="font-display text-lg">Daily Discipline Tonnage</h3>
               <div className="flex items-center gap-2">
                 {currentStreak >= 3 && (
@@ -240,7 +221,7 @@ const HomePage = () => {
             )}
             
             {/* View Habit History Link */}
-            <div className="mt-4 text-center">
+            <div className="text-center">
               <Link 
                 to="/habit-history" 
                 className="text-sm text-muted-foreground underline hover:text-primary transition-colors"
@@ -249,15 +230,37 @@ const HomePage = () => {
               </Link>
             </div>
           </div>
+
+          {/* Current Program Progress - moved here */}
+          <div className="space-y-4">
+            <h3 className="font-display text-xl">Current Program Progress</h3>
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-muted-foreground">Cycle-Adaptive Strength</span>
+                  <span className="font-medium">Week 3 of 8</span>
+                </div>
+                <Progress value={37.5} className="h-3 rounded-full" />
+              </div>
+              <Button 
+                onClick={handleStartNewProgram}
+                disabled={isGenerating}
+                variant="outline"
+                className="w-full"
+              >
+                {isGenerating ? 'Generating...' : 'Start New Program'}
+              </Button>
+            </div>
+          </div>
           
           {/* Combined 1RM and Volume chart */}
           <div>
             <Card>
-              <CardHeader className="p-2">
+              <CardHeader className="p-4">
                 <CardTitle className="text-xl">Training Progress</CardTitle>
                 <CardDescription>Estimated 1RM progress and weekly volume</CardDescription>
               </CardHeader>
-              <CardContent className="p-2 space-y-6">
+              <CardContent className="p-4 pt-0 space-y-6">
                 {/* 1RM Progress */}
                 <div>
                   <h4 className="font-medium mb-3">Estimated 1RM Progress</h4>
