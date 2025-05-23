@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/Navbar";
 import { Confetti } from "@/components/ui/confetti";
 import { useHabits } from "@/hooks/use-habits";
 import { useState } from "react";
+import type { HabitType } from "@/types/habits";
 
 // Mock data for charts
 const oneRmData = [{
@@ -78,7 +79,7 @@ const HomePage = () => {
   const completedCount = getCompletedCount();
 
   // Show confetti when all habits are completed
-  const handleHabitToggle = async (habitType: keyof typeof todaysHabits) => {
+  const handleHabitToggle = async (habitType: HabitType) => {
     await toggleHabit(habitType);
     
     // Check if this completion makes it 4/4
@@ -127,13 +128,13 @@ const HomePage = () => {
             
             <div className="grid grid-cols-4 gap-3">
               {Object.entries(todaysHabits).map(([habit, completed]) => {
-                const progress = getProgressPercentage(habit as keyof typeof todaysHabits);
+                const progress = getProgressPercentage(habit as HabitType);
                 
                 return (
                   <div key={habit} className="flex flex-col items-center">
                     <div 
                       className="relative cursor-pointer group"
-                      onClick={() => handleHabitToggle(habit as keyof typeof todaysHabits)}
+                      onClick={() => handleHabitToggle(habit as HabitType)}
                     >
                       <div className={`habit-ring w-16 h-16 border-4 rounded-full transition-all duration-300 ${
                         completed 
@@ -148,7 +149,7 @@ const HomePage = () => {
                           checked={completed}
                           disabled={isLoading}
                           className="w-6 h-6"
-                          onCheckedChange={() => handleHabitToggle(habit as keyof typeof todaysHabits)}
+                          onCheckedChange={() => handleHabitToggle(habit as HabitType)}
                         />
                       </div>
                       
