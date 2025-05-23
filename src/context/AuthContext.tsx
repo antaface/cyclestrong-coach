@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { User, Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { routeAfterAuth } from "@/utils/routeAfterAuth";
 
 interface AuthContextType {
   user: User | null;
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Check if user has completed onboarding by checking their profile
   const checkOnboardingStatus = async (userId: string) => {
@@ -72,10 +74,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setNeedsOnboarding(false);
           navigate('/landing');
         }
+        
+        // Run global routing after any auth state change
+        setTimeout(() => {
+          routeAfterAuth(navigate, location.pathname);
+        }, 100);
       }
     );
 
-    // Then check for existing session
+    // Then check for existing session and run initial routing
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log("Initial session check:", session?.user?.email);
       setSession(session);
@@ -87,13 +94,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }, 0);
       }
       
+      // Run global routing on app initialization
+      routeAfterAuth(navigate, location.pathname);
       setLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const signUp = async (email: string, password: string, name: string) => {
     try {

@@ -3,21 +3,25 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useAuthRouting } from "@/hooks/use-auth-routing";
-import AuthRoutingLoading from "@/components/auth/AuthRoutingLoading";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { loading } = useAuthRouting();
+  const { loading } = useAuth();
 
   // Show loading while checking auth routing
   if (loading) {
-    return <AuthRoutingLoading />;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="space-y-4 w-full max-w-md">
+          <div className="h-12 w-full bg-gray-200 animate-pulse rounded" />
+          <div className="h-32 w-full bg-gray-200 animate-pulse rounded" />
+          <div className="h-12 w-2/3 mx-auto bg-gray-200 animate-pulse rounded" />
+        </div>
+      </div>
+    );
   }
 
-  // If user is still on landing page after auth routing check,
-  // it means they're not authenticated or should be allowed to stay here
+  // Global routing function will handle redirects if needed
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
       <div className="text-center space-y-8 max-w-md">
