@@ -62,7 +62,7 @@ const ProfilePage = () => {
             goal: data.goal,
             one_rm: data.one_rm ? (typeof data.one_rm === 'string' 
               ? JSON.parse(data.one_rm) 
-              : data.one_rm as Record<string, number>)
+              : data.one_rm as Record<string, number>) : undefined
           };
           
           setUserProfile(typedProfile);
