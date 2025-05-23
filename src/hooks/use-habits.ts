@@ -24,7 +24,7 @@ export const useHabits = () => {
   });
   
   const [habitHistory, setHabitHistory] = useState<HabitEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Get user ID from auth context
   const { user } = useAuth();
@@ -34,6 +34,8 @@ export const useHabits = () => {
   useEffect(() => {
     if (userId) {
       initializeHabits();
+    } else {
+      setIsLoading(false);
     }
   }, [userId]);
 
@@ -45,12 +47,28 @@ export const useHabits = () => {
       // Load today's habits
       const todaysData = await loadTodaysHabits(userId);
       if (todaysData) {
+        // Pre-check habits that are already marked true
         setTodaysHabits(todaysData);
+      } else {
+        // No row exists for today, leave all checkboxes empty
+        setTodaysHabits({
+          training: false,
+          protein: false,
+          sleep: false,
+          mindset: false
+        });
       }
       
       // Load habit history
       const historyData = await loadHabitHistory(userId);
       setHabitHistory(historyData);
+    } catch (error) {
+      console.error("Error initializing habits:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load habit data",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
