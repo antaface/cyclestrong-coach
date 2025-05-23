@@ -141,7 +141,7 @@ export const useHabits = () => {
       
       if (checkError && checkError.code === 'PGRST116') {
         // Row doesn't exist, insert new row with defaults and this habit
-        const newHabits: Record<string, any> = {
+        const newHabits = {
           training: false,
           protein: false,
           sleep: false,
@@ -153,7 +153,7 @@ export const useHabits = () => {
         
         const { error: insertError } = await supabase
           .from('habits')
-          .insert([newHabits]);
+          .insert(newHabits);
         
         if (insertError) {
           throw insertError;
