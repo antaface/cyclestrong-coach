@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { WorkoutTemplate } from '@/components/workout/WorkoutTemplateCard';
 import { CyclePhase } from '@/types';
+import { useCycleEvents } from './use-cycle-events';
 
 // This is temporary mock data - would be replaced with Supabase queries
 const mockTemplates: WorkoutTemplate[] = [
@@ -95,49 +96,61 @@ const mockTemplates: WorkoutTemplate[] = [
   }
 ];
 
+// Helper function to determine current phase from cycle events
+const getCurrentPhaseFromEvents = (cycleEvents: any[]): CyclePhase => {
+  if (cycleEvents.length === 0) return CyclePhase.LUTEAL; // Default fallback
+  
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Find the most recent event on or before today
+  const relevantEvents = cycleEvents
+    .filter(event => event.date <= today)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  
+  if (relevantEvents.length === 0) {
+    // If no past events, look for future events and work backwards
+    const futureEvents = cycleEvents
+      .filter(event => event.date > today)
+      .sort((a, b) => a.date.localeCompare(b.date));
+    
+    if (futureEvents.length > 0) {
+      // Return the phase before the next event
+      const nextPhase = futureEvents[0].phase;
+      const phaseOrder = [CyclePhase.MENSTRUAL, CyclePhase.FOLLICULAR, CyclePhase.OVULATION, CyclePhase.LUTEAL];
+      const nextIndex = phaseOrder.indexOf(nextPhase as CyclePhase);
+      const currentIndex = nextIndex > 0 ? nextIndex - 1 : phaseOrder.length - 1;
+      return phaseOrder[currentIndex];
+    }
+  }
+  
+  return relevantEvents[0]?.phase as CyclePhase || CyclePhase.LUTEAL;
+};
+
 export function usePhaseWorkouts() {
+  const { cycleEvents, isLoading: cycleLoading } = useCycleEvents();
   const [currentPhase, setCurrentPhase] = useState<CyclePhase>(CyclePhase.LUTEAL);
   const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulating API call to get user's current phase
-    // TODO: Replace with actual Supabase query to cycle_events table
-    const fetchCurrentPhase = async () => {
-      try {
-        setIsLoading(true);
-        // Mock data for now - would get from Supabase
-        // const { data, error } = await supabase.from('cycle_events').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(1);
-        
-        // For testing: rotate through phases when reloading
-        const randomPhase = Math.floor(Math.random() * 4);
-        const phases = [CyclePhase.FOLLICULAR, CyclePhase.OVULATION, CyclePhase.LUTEAL, CyclePhase.MENSTRUAL];
-        setCurrentPhase(CyclePhase.LUTEAL); // Set to always be LUTEAL for now
-        
-        // Small delay to simulate API call
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error("Error fetching current phase:", error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchCurrentPhase();
-  }, []);
+    if (!cycleLoading && cycleEvents) {
+      console.log("Determining current phase from cycle events:", cycleEvents);
+      const phase = getCurrentPhaseFromEvents(cycleEvents);
+      console.log("Current phase determined:", phase);
+      setCurrentPhase(phase);
+      setIsLoading(false);
+    }
+  }, [cycleEvents, cycleLoading]);
 
   useEffect(() => {
     // Filter templates based on current phase
-    // TODO: Replace with actual Supabase query to workout_templates table
     if (currentPhase) {
-      // In a real implementation, we would fetch from Supabase:
-      // const { data, error } = await supabase.from('workout_templates').select('*').eq('phase', currentPhase).limit(3);
-      
+      console.log("Filtering templates for phase:", currentPhase);
       const phaseTemplates = mockTemplates.filter(t => t.phase === currentPhase.toLowerCase());
-      setTemplates(phaseTemplates); // Show all templates for the phase
+      console.log("Templates found for phase:", phaseTemplates);
+      setTemplates(phaseTemplates);
     }
   }, [currentPhase]);
 
-  return { currentPhase, templates, isLoading };
+  return { currentPhase, templates, isLoading: isLoading || cycleLoading };
 }
