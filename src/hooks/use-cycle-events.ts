@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CyclePhase } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
@@ -91,6 +91,8 @@ export const useCycleEvents = () => {
         variant: "destructive",
       });
       setCycleEvents([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -203,10 +205,16 @@ export const useCycleEvents = () => {
     }
   };
 
+  // Auto-fetch on mount
+  useEffect(() => {
+    if (user) {
+      fetchCycleEvents();
+    }
+  }, [user]);
+
   return {
     cycleEvents,
     isLoading,
-    setIsLoading,
     nextPeriodDate,
     daysUntilNextPeriod,
     fetchCycleEvents,

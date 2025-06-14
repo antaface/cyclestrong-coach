@@ -133,9 +133,9 @@ export function usePhaseWorkouts() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!cycleLoading && cycleEvents) {
+    if (!cycleLoading) {
       console.log("Determining current phase from cycle events:", cycleEvents);
-      const phase = getCurrentPhaseFromEvents(cycleEvents);
+      const phase = getCurrentPhaseFromEvents(cycleEvents || []);
       console.log("Current phase determined:", phase);
       setCurrentPhase(phase);
       setIsLoading(false);
