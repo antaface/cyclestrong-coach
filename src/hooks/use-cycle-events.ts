@@ -19,16 +19,27 @@ export const useCycleEvents = () => {
   const [daysUntilNextPeriod, setDaysUntilNextPeriod] = useState<number | null>(null);
 
   const fetchCycleEvents = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log("No user found, skipping cycle events fetch");
+      setIsLoading(false);
+      return;
+    }
     
     try {
+      console.log("Fetching cycle events for user:", user.id);
+      
       const { data, error } = await supabase
         .from('cycle_events')
         .select('date, phase')
         .eq('user_id', user.id)
         .order('date', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching cycle events:", error);
+        throw error;
+      }
+      
+      console.log("Cycle events fetched:", data);
       
       if (data && data.length > 0) {
         setCycleEvents(data as CycleEvent[]);
@@ -52,12 +63,65 @@ export const useCycleEvents = () => {
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           setDaysUntilNextPeriod(diffDays);
         }
+      } else {
+        console.log("No cycle events found, checking if user has profile setup");
+        // Check if user has a profile with last_period set
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('last_period, cycle_length')
+          .eq('id', user.id)
+          .single();
+        
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+        } else if (profileData && profileData.last_period) {
+          console.log("Profile found with last_period, generating cycle events");
+          // User has a profile but no cycle events, generate them
+          await generateCycleEventsFromProfile(profileData);
+        } else {
+          console.log("No profile setup found");
+          setCycleEvents([]);
+        }
       }
     } catch (error) {
-      console.error("Error fetching cycle events:", error);
+      console.error("Error in fetchCycleEvents:", error);
       toast({
         title: "Error",
         description: "Failed to load cycle data. Please try again.",
+        variant: "destructive",
+      });
+      setCycleEvents([]);
+    }
+  };
+
+  const generateCycleEventsFromProfile = async (profileData: any) => {
+    try {
+      console.log("Generating cycle events from profile:", profileData);
+      
+      const { error: functionError } = await supabase.functions.invoke('generate-cycle-events', {
+        body: { 
+          data: {
+            userId: user!.id,
+            cycleLength: profileData.cycle_length || 28,
+            lastPeriod: new Date(profileData.last_period).toISOString().split('T')[0]
+          }
+        }
+      });
+      
+      if (functionError) {
+        console.error("Error generating cycle events:", functionError);
+        throw functionError;
+      }
+      
+      console.log("Cycle events generated successfully, refetching...");
+      // Fetch the newly generated events
+      await fetchCycleEvents();
+      
+    } catch (error) {
+      console.error("Error generating cycle events from profile:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate cycle events. Please try updating your cycle manually.",
         variant: "destructive",
       });
     }
@@ -105,7 +169,7 @@ export const useCycleEvents = () => {
         throw fetchError;
       }
       
-      // Generate new cycle events using the edge function with correct data structure
+      // Generate new cycle events using the edge function
       const { error: functionError } = await supabase.functions.invoke('generate-cycle-events', {
         body: { 
           data: {
