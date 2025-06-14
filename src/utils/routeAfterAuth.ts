@@ -1,12 +1,8 @@
 
+import { supabase } from "@/integrations/supabase/client";
+
 export const routeAfterAuth = async (navigate: (path: string) => void, currentPath: string) => {
   try {
-    // TEMPORARILY DISABLED - Allow access to all pages without authentication
-    console.log('Authentication temporarily disabled - allowing access to all pages');
-    return;
-    
-    // Original authentication logic (commented out)
-    /*
     // Wait for session to be determined
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -37,10 +33,11 @@ export const routeAfterAuth = async (navigate: (path: string) => void, currentPa
         navigate('/home');
       }
     }
-    */
   } catch (error) {
     console.error('Error in routeAfterAuth:', error);
-    // Temporarily allow access even on error
-    return;
+    // On error, redirect to auth if not already there
+    if (currentPath !== '/auth' && currentPath !== '/landing') {
+      navigate('/auth');
+    }
   }
 };
