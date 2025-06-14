@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { addMonths } from "date-fns";
 import { Info, Loader2 } from "lucide-react";
@@ -10,6 +9,7 @@ import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import { CalendarGrid } from "@/components/calendar/CalendarGrid";
 import { CalendarLegend } from "@/components/calendar/CalendarLegend";
 import { CalendarDayDialog } from "@/components/calendar/CalendarDayDialog";
+import { EditCycleDialog } from "@/components/calendar/EditCycleDialog";
 import { CyclePhase } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
@@ -39,6 +39,37 @@ const CalendarPage = () => {
   const prevMonth = () => {
     setDirection(-1);
     setCurrentDate(addMonths(currentDate, -1));
+  };
+  
+  const handlePeriodDateUpdate = async (newPeriodDate: Date) => {
+    if (!user) return;
+    
+    try {
+      // Update the user's profile with the new last_period date
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          last_period: newPeriodDate.toISOString().split('T')[0]
+        })
+        .eq('id', user.id);
+      
+      if (profileError) throw profileError;
+      
+      // Regenerate cycle events based on the new period date
+      const { error: functionError } = await supabase.functions.invoke('generate-cycle-events', {
+        body: { 
+          userId: user.id,
+          lastPeriod: newPeriodDate.toISOString().split('T')[0]
+        }
+      });
+      
+      if (functionError) throw functionError;
+      
+      // Refresh the cycle events display
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating period date:", error);
+    }
   };
   
   useEffect(() => {
@@ -159,6 +190,10 @@ const CalendarPage = () => {
           nextPeriodDate={nextPeriodDate} 
           daysUntilNextPeriod={daysUntilNextPeriod} 
         />
+        
+        <div className="mt-6">
+          <EditCycleDialog onPeriodDateUpdate={handlePeriodDateUpdate} />
+        </div>
       </PageContainer>
       
       <CalendarDayDialog 

@@ -1,6 +1,7 @@
 
 import React from "react";
 import PageContainer from "@/components/layout/PageContainer";
+import Navbar from "@/components/layout/Navbar";
 import { useProgram } from "@/hooks/use-program";
 import ProgramLoading from "@/components/program/ProgramLoading";
 import EmptyProgramState from "@/components/program/EmptyProgramState";
@@ -33,9 +34,12 @@ const ProgramPage = () => {
   };
 
   return (
-    <PageContainer title="Training Program">
-      {renderContent()}
-    </PageContainer>
+    <>
+      <PageContainer title="Training Program">
+        {renderContent()}
+      </PageContainer>
+      <Navbar />
+    </>
   );
 };
 
