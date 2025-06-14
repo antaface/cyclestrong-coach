@@ -5,57 +5,46 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters")
 });
-
 const signupSchema = loginSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters")
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords do not match",
-  path: ["confirmPassword"],
+  path: ["confirmPassword"]
 });
-
 type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
-
 const AuthPage = () => {
-  const { signIn, signUp } = useAuth();
+  const {
+    signIn,
+    signUp
+  } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.state?.tab || "login");
-  
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   });
-
   const signupForm = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
-    },
+      confirmPassword: ""
+    }
   });
-
   const handleLogin = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
@@ -66,7 +55,6 @@ const AuthPage = () => {
       setIsLoading(false);
     }
   };
-
   const handleSignup = async (data: SignupFormValues) => {
     setIsLoading(true);
     try {
@@ -79,18 +67,12 @@ const AuthPage = () => {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
+  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-joyful-cream to-white px-6 py-10">
       <div className="w-full max-w-md">
         {/* Logo and app name */}
         <div className="text-center mb-10">
           <div className="inline-block mb-4">
-            <img 
-              src="/lovable-uploads/2229106c-fa2d-4c26-904b-f9b4cd6b309b.png" 
-              alt="CycleStrong Coach" 
-              className="h-20 w-auto mx-auto"
-            />
+            <img src="/lovable-uploads/2229106c-fa2d-4c26-904b-f9b4cd6b309b.png" alt="CycleStrong Coach" className="h-36 w-auto mx-auto" />
           </div>
           <p className="text-muted-foreground mt-2">
             Science-based strength training tailored to your menstrual cycle
@@ -109,37 +91,25 @@ const AuthPage = () => {
             <TabsContent value="login">
               <Form {...loginForm}>
                 <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-5">
-                  <FormField
-                    control={loginForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={loginForm.control} name="email" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-foreground">Email</FormLabel>
                         <FormControl>
                           <Input placeholder="name@example.com" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={loginForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
+                      </FormItem>} />
+                  <FormField control={loginForm.control} name="password" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-foreground">Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button 
-                    type="submit" 
-                    className="w-full mt-2" 
-                    disabled={isLoading}
-                  >
+                      </FormItem>} />
+                  <Button type="submit" className="w-full mt-2" disabled={isLoading}>
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
@@ -150,63 +120,43 @@ const AuthPage = () => {
             <TabsContent value="signup">
               <Form {...signupForm}>
                 <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-5">
-                  <FormField
-                    control={signupForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={signupForm.control} name="name" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-foreground">Name</FormLabel>
                         <FormControl>
                           <Input placeholder="Your name" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={signupForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
+                      </FormItem>} />
+                  <FormField control={signupForm.control} name="email" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-foreground">Email</FormLabel>
                         <FormControl>
                           <Input placeholder="name@example.com" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={signupForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
+                      </FormItem>} />
+                  <FormField control={signupForm.control} name="password" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-foreground">Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={signupForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
+                      </FormItem>} />
+                  <FormField control={signupForm.control} name="confirmPassword" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel className="text-foreground">Confirm Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button 
-                    type="submit" 
-                    className="w-full mt-2" 
-                    disabled={isLoading}
-                  >
+                      </FormItem>} />
+                  <Button type="submit" className="w-full mt-2" disabled={isLoading}>
                     {isLoading ? "Creating account..." : "Create Account"}
                   </Button>
                 </form>
@@ -221,8 +171,6 @@ const AuthPage = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AuthPage;
