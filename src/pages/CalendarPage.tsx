@@ -130,12 +130,14 @@ const CalendarPage = () => {
         throw fetchError;
       }
       
-      // Generate new cycle events using the edge function
+      // Generate new cycle events using the edge function with correct data structure
       const { error: functionError } = await supabase.functions.invoke('generate-cycle-events', {
         body: { 
-          userId: user.id,
-          cycleLength: profileData.cycle_length || 28,
-          lastPeriod: newPeriodDate.toISOString().split('T')[0]
+          data: {
+            userId: user.id,
+            cycleLength: profileData.cycle_length || 28,
+            lastPeriod: newPeriodDate.toISOString().split('T')[0]
+          }
         }
       });
       
