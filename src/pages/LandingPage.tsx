@@ -19,7 +19,7 @@ const LandingPage = () => {
                 tab: 'signup'
               }
             })} 
-            className="w-full py-6 text-lg bg-white text-primary hover:bg-gray-50 hover:text-primary border-2 border-white shadow-lg font-bold"
+            className="w-full py-6 text-lg bg-white text-white hover:bg-gray-50 hover:text-white shadow-lg font-bold"
           >
             Get Started
           </Button>
@@ -31,7 +31,7 @@ const LandingPage = () => {
                 tab: 'login'
               }
             })} 
-            className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary w-full py-6 text-lg font-bold shadow-lg"
+            className="border-2 border-white bg-transparent text-white hover:text-white w-full py-6 text-lg font-bold shadow-lg"
           >
             I Already Have an Account
           </Button>
