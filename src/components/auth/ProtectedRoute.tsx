@@ -6,11 +6,12 @@ import AuthRoutingLoading from "@/components/auth/AuthRoutingLoading";
 const ProtectedRoute = () => {
   const { loading } = useAuth();
 
-  if (loading) {
-    return <AuthRoutingLoading />;
-  }
+  // TEMPORARILY DISABLED - Skip loading check and allow all routes
+  // if (loading) {
+  //   return <AuthRoutingLoading />;
+  // }
 
-  // Let the global routing function handle all redirects
+  // Allow access to all protected routes without authentication
   return <Outlet />;
 };
 
