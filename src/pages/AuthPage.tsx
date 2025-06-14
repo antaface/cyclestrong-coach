@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -88,13 +86,12 @@ const AuthPage = () => {
         {/* Logo and app name */}
         <div className="text-center mb-10">
           <div className="inline-block mb-4">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-r from-primary to-joyful-orange flex items-center justify-center">
-              <Dumbbell className="w-12 h-12 text-white animate-subtle-bounce" />
-            </div>
+            <img 
+              src="/lovable-uploads/2229106c-fa2d-4c26-904b-f9b4cd6b309b.png" 
+              alt="CycleStrong Coach" 
+              className="h-20 w-auto mx-auto"
+            />
           </div>
-          <h1 className="text-3xl font-display text-foreground">
-            CycleStrong Coach
-          </h1>
           <p className="text-muted-foreground mt-2">
             Science-based strength training tailored to your menstrual cycle
           </p>
