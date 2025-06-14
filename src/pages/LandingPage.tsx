@@ -1,5 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+
 const LandingPage = () => {
   const navigate = useNavigate();
 
@@ -11,21 +13,26 @@ const LandingPage = () => {
   }}>
       <div className="text-center space-y-8 max-w-md">
         <div className="flex flex-col gap-4 mt-10">
-          <Button onClick={() => navigate("/auth", {
-          state: {
-            tab: 'signup'
-          }
-        })} style={{
-          color: '#F27261'
-        }} className="w-full py-6 text-lg bg-white text-coral hover:bg-white/90 text-joyful-cream">
+          <Button 
+            onClick={() => navigate("/auth", {
+              state: {
+                tab: 'signup'
+              }
+            })} 
+            className="w-full py-6 text-lg bg-white text-primary hover:bg-gray-50 hover:text-primary border-2 border-white shadow-lg font-bold"
+          >
             Get Started
           </Button>
           
-          <Button variant="outline" onClick={() => navigate("/auth", {
-          state: {
-            tab: 'login'
-          }
-        })} className="border-white text-white hover:bg-white/10 w-full py-6 text-lg">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/auth", {
+              state: {
+                tab: 'login'
+              }
+            })} 
+            className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary w-full py-6 text-lg font-bold shadow-lg"
+          >
             I Already Have an Account
           </Button>
         </div>
@@ -36,4 +43,5 @@ const LandingPage = () => {
       </div>
     </div>;
 };
+
 export default LandingPage;
