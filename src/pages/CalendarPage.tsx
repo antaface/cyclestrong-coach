@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/layout/Navbar";
@@ -15,7 +15,6 @@ const CalendarPage = () => {
   const {
     cycleEvents,
     isLoading,
-    setIsLoading,
     nextPeriodDate,
     daysUntilNextPeriod,
     fetchCycleEvents,
@@ -24,16 +23,6 @@ const CalendarPage = () => {
 
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  useEffect(() => {
-    const loadCycleEvents = async () => {
-      setIsLoading(true);
-      await fetchCycleEvents();
-      setIsLoading(false);
-    };
-    
-    loadCycleEvents();
-  }, []);
   
   const handleDayClick = (day: Date) => {
     setSelectedDay(day);
