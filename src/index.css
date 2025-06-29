@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -55,17 +54,32 @@
     @apply border-border;
   }
 
+  html {
+    /* Force mobile layout at the root level */
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
   body {
     @apply text-foreground font-body text-body;
     background: linear-gradient(135deg, #F27261 0%, #F49E85 50%, #F9D5B4 100%);
     background-attachment: fixed;
     min-height: 100vh;
-  }
-
-  /* Force mobile layout globally */
-  #root {
     max-width: 100vw;
     overflow-x: hidden;
+    /* Center content and apply mobile constraints */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* Force mobile layout globally with stronger specificity */
+  #root {
+    max-width: 448px !important; /* Force mobile width (max-w-md) */
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
   }
 
   /* Typography styles */

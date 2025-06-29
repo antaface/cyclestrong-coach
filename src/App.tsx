@@ -28,29 +28,34 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-        <Routes>
-          {/* Redirect root to landing */}
-          <Route path="/" element={<Navigate to="/landing" replace />} />
-          
-          {/* Public routes */}
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          
-          {/* Apply ProtectedRoute to both onboarding and authenticated routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/program" element={<ProgramPage />} />
-            <Route path="/workout" element={<WorkoutPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/habit-history" element={<HabitHistoryPage />} />
-            <Route path="/form-check" element={<FormCheckPage />} />
-          </Route>
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
+        {/* Mobile app container with centered layout */}
+        <div className="min-h-screen w-full flex justify-center bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10">
+          <div className="w-full max-w-md mx-auto min-h-screen relative">
+            <Routes>
+              {/* Redirect root to landing */}
+              <Route path="/" element={<Navigate to="/landing" replace />} />
+              
+              {/* Public routes */}
+              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              
+              {/* Apply ProtectedRoute to both onboarding and authenticated routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/onboarding" element={<OnboardingPage />} />
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/program" element={<ProgramPage />} />
+                <Route path="/workout" element={<WorkoutPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/habit-history" element={<HabitHistoryPage />} />
+                <Route path="/form-check" element={<FormCheckPage />} />
+              </Route>
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Toaster />
+          </div>
+        </div>
       </ThemeProvider>
     </AuthProvider>
   );
