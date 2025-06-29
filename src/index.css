@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -55,9 +56,10 @@
   }
 
   body {
-    @apply text-foreground bg-background font-body text-body;
-    background: linear-gradient(180deg, rgba(242,114,97,0.3) 0%, rgba(244,158,133,0.3) 100%);
+    @apply text-foreground font-body text-body;
+    background: linear-gradient(135deg, #F27261 0%, #F49E85 50%, #F9D5B4 100%);
     background-attachment: fixed;
+    min-height: 100vh;
   }
 
   /* Typography styles */
